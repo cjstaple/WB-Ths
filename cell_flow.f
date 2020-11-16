@@ -16,7 +16,7 @@
       integer :: i,j !indices
       integer :: x,y,x0,y0!coordinates
       integer :: h   !current height
-      real :: source !cm^3/s
+      real :: source !m^3(1 year run)
       integer :: f_count
 
       integer :: tid
@@ -43,7 +43,7 @@
       do i=1,d1
        do j=1,d2
           f_count = 0
-          source = m(i,j)%rain*(29.97)*m(i,j)%flow_frac
+          source = m(i,j)%rain*(647.5)*m(i,j)%flow_frac
           m(i,j)%outflow = m(i,j)%outflow + source
           h = m(i,j)%height
           x0=i
@@ -51,8 +51,8 @@
           do while(h.gt.0)
             f_count = f_count + 1
             x=m(x0,y0)%outflow_cell(1)
-            y=m(x0,y0)%outflow_cell(2) 
-            source = source*m(x,y)%flow_frac
+            y=m(x0,y0)%outflow_cell(2)
+            source = source*0.95
             m(x,y)%outflow = m(x,y)%outflow+source
             h=m(x,y)%height
             x0=x

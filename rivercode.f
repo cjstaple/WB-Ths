@@ -36,10 +36,23 @@
       close(3)
       call prof_exit(1,1)
 
+      do i=1,d1
+       do j=1,d2
+        if(map(i,j)%height.eq.0) then
+           map(i,j)%ocean=.true.
+           map(i,j)%flow_solved=.false.
+        else
+           map(i,j)%ocean=.false.
+           map(i,j)%flow_solved=.true.
+        endif
+       enddo
+      enddo
+
       call cell_sink(map)
       call prof_write
 
-      call cell_drain(map)
+      call grad_flow(map)
+      !call cell_drain(map)
       call prof_write
 
       call cell_flow(map)

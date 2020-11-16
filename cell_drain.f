@@ -41,7 +41,6 @@
            m(i,j)%outflow_cell(1)=i
            m(i,j)%outflow_cell(2)=j
         else
-           call prof_enter(4,tid,'DRAIN POINT SEARCH: ')
            do while(h0.eq.m(i,j)%height)
             do k=-r,r,1
              do l=-r,r,1
@@ -57,9 +56,7 @@
             enddo
             r=r+1
            enddo
-           call prof_exit(4,tid)
 
-           call prof_enter(5,tid,'  DIRECTION SEARCH: ')
            s0=2.0d+00*r
            do k=-1,1,1
             do l=-1,1,1
@@ -73,7 +70,6 @@
                endif
             enddo
            enddo
-           call prof_exit(5,tid)
           endif
        enddo
       enddo
