@@ -116,7 +116,7 @@
             if(lake(k,l)) then
               do a=-1,1,1
                do b=-1,1,1
-                 d=1.0*sqrt((k+a-drain(1))**2.+(l+b-drain(2))**2
+                 d=1.0*sqrt((k+a-drain(1))**2.+(l+b-drain(2))**2)
                  if(d.lt.d_max) then
                     d_max=d
                     m(k,l)%outflow_cell(1)=k+a
