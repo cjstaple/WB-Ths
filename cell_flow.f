@@ -70,6 +70,14 @@
        enddo
       enddo
 !$OMP END DO
+
+!$OMP DO SCHEDULE(STATIC) COLLAPSE(2)
+      do i=1,d1
+       do j=1,d2
+         m(i,j)%outflow=m(i,j)%outflow/3.1536d+07
+       enddo
+      enddo
+!$OMP END DO
       call prof_exit(9,tid)
       call prof_exit(n_max,tid)
 !$OMP END PARALLEL
