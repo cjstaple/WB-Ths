@@ -20,8 +20,6 @@
          ! Catagory Flags & Indices
          logical :: ocean
          logical :: flow_solved
-         logical :: active
-         integer :: plain_index
       end type
 
 !-----Layer Functions---------------------------------------------------

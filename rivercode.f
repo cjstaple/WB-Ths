@@ -51,8 +51,8 @@
       call cell_sink(map)
       call prof_write
 
-      call grad_flow(map)
-      !call cell_drain(map)
+      !call grad_flow(map)
+      call cell_drain(map)
       call prof_write
 
       call cell_flow(map)
@@ -69,7 +69,6 @@
       enddo
       close(10)
       call prof_exit(n_max-1,1)
-      write(*,*) "Ending Test"
 11    format(2i5,i6,f18.6,2i5)
 
       deallocate(map)

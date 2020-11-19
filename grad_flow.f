@@ -30,7 +30,6 @@
       integer :: OMP_GET_THREAD_NUM
 
 !-----------------------------------------------------------------------
-
       call prof_enter(3,1,'   DRAIN DIRECTION: ')
 !$OMP PARALLEL DEFAULT(PRIVATE) SHARED(d1,d2,m)
       tid=OMP_GET_THREAD_NUM()
