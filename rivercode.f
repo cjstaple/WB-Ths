@@ -35,6 +35,7 @@
       close(2)
       close(3)
       call prof_exit(1,1)
+      write(*,*) 'Data Read Complete'
 
       do i=1,d1
        do j=1,d2
@@ -47,16 +48,19 @@
         endif
        enddo
       enddo
+      write(*,*) 'Ocean Solved'
 
       call cell_sink(map)
       call prof_write
+      write(*,*) 'Sink Calculated'
 
-      !call grad_flow(map)
       call cell_drain(map)
       call prof_write
+      write(*,*) 'Flow Cells Calculated'
 
       call cell_flow(map)
       call prof_write
+      write(*,*) 'Cells Drained'
 
       call prof_enter(n_max-1,1,'      WRITE OUTPUT: ')
       fname="flow-a.dat"

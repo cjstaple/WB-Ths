@@ -14,13 +14,13 @@
 !-----------------------------------------------------------------------
 
       integer :: i,j,k,l,a,b    !Loop Indices
-      integer :: p,q,xf,yf      !Coordinates
+      integer :: p,q,u,v,xf,yf  !Coordinates
       integer :: r              !Search Range
       real :: s,s0              !Cell Distance
       integer :: h0             !Initial Cell Height
       integer :: ht             !Test Cell Height
-      real :: cpt, rwalk
-      integer :: cpti
+      real :: rwalk
+      integer,dimension(3) :: cpt
 
       logical, dimension(d1,d2) :: connected
 
@@ -31,22 +31,18 @@
 !$OMP PARALLEL DEFAULT(PRIVATE) SHARED(d1,d2,m)
       tid=OMP_GET_THREAD_NUM()
       tid=tid+2
-      call cpu_time(cpt)
-      cpti=floor(cpt)
-      call srand(mod(tid*cpti,100000))
+      call itime(cpt)
+      call srand(mod(tid*cpt(3),100000))
       call prof_enter(n_max,tid,'    TOTAL RUN TIME: ')
       call prof_enter(3,tid,'   DRAIN DIRECTION: ')
-!$OMP DO SCHEDULE(STATIC) COLLAPSE(2)
-      do i=1,d1
-       do j=1,d2
-        connected(i,j)=.false.
-       enddo
-      enddo
-!$OMP END DO
+!$OMP CRITICAL
+      call prof_write
+!$OMP END CRITICAL
 
 !$OMP DO SCHEDULE(DYNAMIC) COLLAPSE(2)
       do i=1,d1
        do j=1,d2
+        connected=.false.
 !$OMP CRITICAL
         call prof_write
 !$OMP END CRITICAL
