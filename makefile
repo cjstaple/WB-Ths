@@ -10,7 +10,7 @@ LINK = $(LK) $(OP)			#Link Command
 
 MODS = parameter_module.o profile_module.o map_module.o
 
-OBJS = cell_sink.o cell_flow.o cell_drain.o 
+OBJS = cell_sink.o cell_flow.o cell_drain.o connect_rad_flow.o
 
 PROG = rivercode.o
 
