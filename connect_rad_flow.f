@@ -24,6 +24,11 @@
       logical, dimension(d1,d2) :: connected
       logical :: finish
 
+      integer, dimension(3) :: cpt
+      integer :: cpti
+      integer :: tid
+      integer :: OMP_GET_THREAD_NUM
+
 !-----------------------------------------------------------------------
 !.....Initialization....................................................
       if(m(x0,y0)%ocean) then
@@ -31,9 +36,9 @@
          m(x0,y0)%outflow_cell(2)=y0
          return
       endif
+      call prof_enter(3,1,'        CELL DRAIN: ')
       finish=.false.
       h0=m(x0,y0)%height
-      r=1
       do i=1,d1
        do j=1,d2
          connected(i,j)=.false.
@@ -45,18 +50,36 @@
          p=min(max(x0+i,1),d1)
          q=min(max(y0+j,1),d2)
          ht=m(p,q)%height
-         if(ht.le.h0) connected(p,q)=.true.
+         if(ht.le.m(x0,y0)%height) connected(p,q)=.true.
          if(ht.lt.h0) then
             h0=ht
             m(x0,y0)%outflow_cell(1)=p
             m(x0,y0)%outflow_cell(2)=q
+            m(x0,y0)%flow_solved=.true.
             finish=.true.
          endif
        enddo
       enddo
-      if(finish) return
+      if(finish) then
+        call prof_exit(3,1)
+        return
+      endif
+      call prof_enter(4,1,'       LEVEL DRAIN: ')
+!-----Set Up Parallelization--------------------------------------------
+!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(d1,d2,m,x0,y0,h0,xf,yf,r)
+      tid=OMP_GET_THREAD_NUM()
+      call itime(cpt)
+      tid=tid+2
+      call prof_enter(n_max,tid,'    TOTAL RUN TIME: ')
+      cpti=mod(cpt(3)*tid,10000)
+      call prof_enter(4,tid,'      LEVEL DRAIN: ')
+      call srand(cpti)
+      r=1
+
 !.....Find Nearest Drain Point..........................................
       do while(h0.eq.m(x0,y0)%height)
+       call prof_enter(5,tid,'    RADIUS SEARCH: ')
+!$OMP DO SCHEDULE(STATIC) COLLAPSE(2)
        do i=-r,r,1
         do j=-r,r,1
           p=min(max(x0+i,1),d1)
@@ -68,40 +91,60 @@
                 v=min(max(q+l,1),d2)
                 ht=m(u,v)%height
                 if(ht.le.h0) connected(u,v)=.true.
+!$OMP CRITICAL
                 if(ht.lt.h0) then
                    h0=ht
                    xf=u
                    yf=v
                 endif
+!$OMP END CRITICAL
               enddo
              enddo
           endif
         enddo
        enddo
+!$OMP END DO
+       call prof_exit(5,tid)
        r=r+1
       enddo
 !.....Drain into connected cell nearest the drain point.................
-      s0=2.0d+00*r
-      do i=-1,1,1
-       do j=-1,1,1
-         p=min(max(x0+i,1),d1)
-         q=min(max(y0+j,1),d2)
-         if(connected(p,q)) then
-           s=sqrt(1.0*(xf-p)**2. + 1.0*(yf-q)**2.)
-           if(s.lt.s0) then
-             s0=s
-             m(x0,y0)%outflow_cell(1)=p
-             m(x0,y0)%outflow_cell(2)=q
-           elseif(s.eq.s0) then
-             rwalk=rand()
-             if(rwalk.gt.0.5) then
-               m(x0,y0)%outflow_cell(1)=p
-               m(x0,y0)%outflow_cell(2)=q
-             endif
-           endif
+!$OMP DO SCHEDULE(DYNAMIC) COLLAPSE(2)
+      do k=1,d1
+       do l=1,d2
+         if(connected(k,l)) then
+           s0=2.0d+00*r
+           do i=-1,1,1
+            do j=-1,1,1
+              p=min(max(k+i,1),d1)
+              q=min(max(l+j,1),d2)
+              if(connected(p,q)) then
+                s=sqrt(1.0*(xf-p)**2. + 1.0*(yf-q)**2.)
+                if(s.lt.s0) then
+                  s0=s
+                  m(k,l)%outflow_cell(1)=p
+                  m(k,l)%outflow_cell(2)=q
+                  m(k,l)%flow_solved=.true.
+                elseif(s.eq.s0) then
+                  rwalk=rand()
+                  if(rwalk.gt.0.5) then
+                    m(k,l)%outflow_cell(1)=p
+                    m(k,l)%outflow_cell(2)=q
+                    m(k,l)%flow_solved=.true.
+                  endif
+                endif
+              endif
+            enddo
+           enddo
          endif
        enddo
       enddo
+!$OMP END DO
+!-----End Parallelization-----------------------------------------------
+      call prof_exit(4,tid)
+      call prof_exit(n_max,tid)
+!$OMP END PARALLEL
+      call prof_exit(4,1)
+      call prof_exit(3,1)
 
       return
       end subroutine

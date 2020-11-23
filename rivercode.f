@@ -54,8 +54,13 @@
       call prof_write
       write(*,*) 'Sink Calculated'
 
-      call cell_drain(map)
-      call prof_write
+      do i=1,d1
+       do j=1,d2
+         if(map(i,j)%flow_solved) cycle
+         call prof_write
+         call drain_connect(map,i,j)
+       enddo
+      enddo
       write(*,*) 'Flow Cells Calculated'
 
       call cell_flow(map)
