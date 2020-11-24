@@ -139,7 +139,7 @@
            if(m(k,l)%flow_solved) then
              continue
            else
-            open(10,name='error.log',status='unknown',position='append')
+            open(10,file='error.log',status='unknown',position='append')
             write(10,11) 'Failed to Solve Connected Node:',k,l,s0,
      &         m(k,l)%height
             close(10)
