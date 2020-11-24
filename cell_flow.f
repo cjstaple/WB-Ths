@@ -48,6 +48,11 @@
           h = m(i,j)%height
           x0=i
           y0=j
+          if(m(i,j)%flow_solved) then
+             continue
+          else
+             call drain_connect(m,i,j)
+          endif
           do while(h.gt.0)
             f_count = f_count + 1
             x=m(x0,y0)%outflow_cell(1)
@@ -59,12 +64,12 @@
             y0=y
             if((x0.eq.i).and.(y0.eq.j)) h=0
             if(source.lt.1.0) h=0
-            if(mod(f_count,10).eq.0) then
+            if(f_count.gt.1000) h=0
+            if(mod(f_count,25).eq.0) then
 !$OMP CRITICAL
                call prof_write
 !$OMP END CRITICAL
             endif
-            if(f_count.gt.500) h=0
           enddo
           m(i,j)%f_length = f_count
        enddo
@@ -74,7 +79,7 @@
 !$OMP DO SCHEDULE(STATIC) COLLAPSE(2)
       do i=1,d1
        do j=1,d2
-         m(i,j)%outflow=m(i,j)%outflow/3.1536d+07
+         m(i,j)%outflow=m(i,j)%outflow/(3.60d+02) !Convert units */day
        enddo
       enddo
 !$OMP END DO

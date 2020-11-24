@@ -34,6 +34,7 @@
       if(m(x0,y0)%ocean) then
          m(x0,y0)%outflow_cell(1)=x0
          m(x0,y0)%outflow_cell(2)=y0
+         m(x0,y0)%flow_solved=.true.
          return
       endif
       call prof_enter(3,1,'        CELL DRAIN: ')
@@ -90,7 +91,7 @@
                 u=min(max(p+k,1),d1)
                 v=min(max(q+l,1),d2)
                 ht=m(u,v)%height
-                if(ht.le.h0) connected(u,v)=.true.
+                if(ht.le.m(x0,y0)%height) connected(u,v)=.true.
 !$OMP CRITICAL
                 if(ht.lt.h0) then
                    h0=ht
@@ -112,7 +113,7 @@
       do k=1,d1
        do l=1,d2
          if(connected(k,l)) then
-           s0=2.0d+00*r
+           s0=2.0d+03
            do i=-1,1,1
             do j=-1,1,1
               p=min(max(k+i,1),d1)
@@ -135,6 +136,14 @@
               endif
             enddo
            enddo
+           if(m(k,l)%flow_solved) then
+             continue
+           else
+            open(10,name='error.log',status='unknown',position='append')
+            write(10,11) 'Failed to Solve Connected Node:',k,l,s0,
+     &         m(k,l)%height
+            close(10)
+           endif
          endif
        enddo
       enddo
@@ -145,6 +154,8 @@
 !$OMP END PARALLEL
       call prof_exit(4,1)
       call prof_exit(3,1)
+
+11    format(1x,a33,i5,i5,' Dist: ',f12.5,' Height: ',i5)
 
       return
       end subroutine
