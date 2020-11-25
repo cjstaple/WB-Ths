@@ -23,7 +23,7 @@
       real :: t_ice = 2.70d+02  ! Freeze Temperature
 !-----------------------------------------------------------------------
       call prof_enter(2,1,'    CELL SINK CALC: ')
-!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(d1,d2,m,t_vap,t_ice)
+!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m,t_vap,t_ice)
       tid=OMP_GET_THREAD_NUM()
       tid=tid+2
       call prof_enter(n_max,tid,'    TOTAL RUN TIME: ')

@@ -12,14 +12,12 @@
 
 !-----Local Variable Definitions----------------------------------------
 
-      type(map_type), dimension(:,:),allocatable :: map
+      type(map_type), dimension(d1,d2) :: map
       integer :: i,j,k,a,b
       character(20) :: fname
 
 !-----Import Map Data---------------------------------------------------
       call prof_initial
-      allocate(map(d1,d2))
-
       call prof_enter(1,1,'      DATA READ-IN: ')
       open(1,file="htab-a.dat")
       open(2,file="rtab-a.dat")
@@ -67,20 +65,8 @@
       call prof_write
       write(*,*) 'Cells Drained'
 
-      call prof_enter(n_max-1,1,'      WRITE OUTPUT: ')
-      fname="flow-a.dat"
-      open(10,file=fname)
-      do i=1,d1
-       do j=1,d2
-        write(10,11) i,j,map(i,j)%f_length, map(i,j)%outflow,
-     &    map(i,j)%outflow_cell(1), map(i,j)%outflow_cell(2)
-       enddo
-      enddo
-      close(10)
-      call prof_exit(n_max-1,1)
-11    format(2i5,i6,f18.6,2i5)
+      call flow_out(map)
 
-      deallocate(map)
       call prof_write
       end program
 !=======================================================================

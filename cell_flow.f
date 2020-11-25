@@ -24,7 +24,7 @@
 
 !-----------------------------------------------------------------------
       call prof_enter(7,1,'    DOWN FLOW CALC: ')
-!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(d1,d2,m)
+!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m)
       tid=OMP_GET_THREAD_NUM()
       tid=tid+2
       call prof_enter(n_max,tid,'    TOTAL RUN TIME: ')

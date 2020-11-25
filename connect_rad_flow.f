@@ -67,7 +67,7 @@
       endif
       call prof_enter(4,1,'       LEVEL DRAIN: ')
 !-----Set Up Parallelization--------------------------------------------
-!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(d1,d2,m,x0,y0,h0,xf,yf,r)
+!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m,x0,y0,h0,xf,yf,r)
       tid=OMP_GET_THREAD_NUM()
       call itime(cpt)
       tid=tid+2
