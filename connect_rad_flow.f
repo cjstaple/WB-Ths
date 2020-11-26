@@ -37,7 +37,7 @@
          m(x0,y0)%flow_solved=.true.
          return
       endif
-      call prof_enter(3,1,'        CELL DRAIN: ')
+      call prof_enter(4,1,'        CELL DRAIN: ')
       finish=.false.
       h0=m(x0,y0)%height
       do i=1,d1
@@ -62,10 +62,10 @@
        enddo
       enddo
       if(finish) then
-        call prof_exit(3,1)
+        call prof_exit(4,1)
         return
       endif
-      call prof_enter(4,1,'       LEVEL DRAIN: ')
+      call prof_enter(5,1,'       LEVEL DRAIN: ')
 !-----Set Up Parallelization--------------------------------------------
 !$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m,x0,y0,h0,xf,yf,r)
       tid=OMP_GET_THREAD_NUM()
@@ -73,13 +73,13 @@
       tid=tid+2
       call prof_enter(n_max,tid,'    TOTAL RUN TIME: ')
       cpti=mod(cpt(3)*tid,10000)
-      call prof_enter(4,tid,'      LEVEL DRAIN: ')
+      call prof_enter(5,tid,'      LEVEL DRAIN: ')
       call srand(cpti)
       r=1
 
 !.....Find Nearest Drain Point..........................................
       do while(h0.eq.m(x0,y0)%height)
-       call prof_enter(5,tid,'    RADIUS SEARCH: ')
+       call prof_enter(6,tid,'    RADIUS SEARCH: ')
 !$OMP DO SCHEDULE(STATIC) COLLAPSE(2)
        do i=-r,r,1
         do j=-r,r,1
@@ -92,20 +92,20 @@
                 v=min(max(q+l,1),d2)
                 ht=m(u,v)%height
                 if(ht.le.m(x0,y0)%height) connected(u,v)=.true.
-!$OMP CRITICAL
                 if(ht.lt.h0) then
+!$OMP CRITICAL
                    h0=ht
                    xf=u
                    yf=v
-                endif
 !$OMP END CRITICAL
+                endif
               enddo
              enddo
           endif
         enddo
        enddo
 !$OMP END DO
-       call prof_exit(5,tid)
+       call prof_exit(6,tid)
        r=r+1
       enddo
 !.....Drain into connected cell nearest the drain point.................
@@ -149,11 +149,11 @@
       enddo
 !$OMP END DO
 !-----End Parallelization-----------------------------------------------
-      call prof_exit(4,tid)
+      call prof_exit(5,tid)
       call prof_exit(n_max,tid)
 !$OMP END PARALLEL
+      call prof_exit(5,1)
       call prof_exit(4,1)
-      call prof_exit(3,1)
 
 11    format(1x,a33,i5,i5,' Dist: ',f12.5,' Height: ',i5)
 

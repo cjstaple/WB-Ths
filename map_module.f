@@ -13,7 +13,6 @@
          integer :: rain   !mm/year
          integer :: temp   !K
          real :: flow_frac !Water - Freeze - Evaporate
-         real :: infow
          real :: outflow
          integer :: f_length
          integer, dimension(2) :: outflow_cell

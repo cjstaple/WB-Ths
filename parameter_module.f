@@ -7,7 +7,7 @@
       implicit none
 
 !.....IMAGE PROPERTIES..................................................
-      integer,parameter :: d1=1683     !first image dimension
-      integer,parameter :: d2=2016     !second image diminesion
+      integer :: d1 = 1683     !first image dimension
+      integer :: d2 = 2016     !second image diminesion
 
       end module parameter_module

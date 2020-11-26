@@ -3,7 +3,7 @@ VPATH = ../
 FC = gfortran -c			#fortran compiler
 LK = gfortran -o ../flow_v2.8 		#program linker
 
-OP = -fopenmp -g -O2			#compiling options
+OP = -fopenmp -g -O2 -fbacktrace	#compiling options
 
 COMP = $(FC) $(OP)			#Compile Command
 LINK = $(LK) $(OP)			#Link Command
