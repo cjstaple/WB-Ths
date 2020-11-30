@@ -51,7 +51,7 @@
           if(m(i,j)%flow_solved) then
              continue
           else
-             call drain_connect(m,i,j)
+             call rand_drain(m,i,j)
           endif
           do while(h.gt.0)
             f_count = f_count + 1
