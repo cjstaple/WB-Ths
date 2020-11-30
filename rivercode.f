@@ -35,43 +35,20 @@
       call prof_exit(1,1)
       call prof_write
 
-      call prof_enter(2,1,'       OCEAN CHECK: ')
+      call ocean_search(map)
+      call frac_calc(map)
+      call drop_search(map)
+
       do i=1,d1
        do j=1,d2
-        if(map(i,j)%height.eq.0) then
-           map(i,j)%ocean=.true.
-           map(i,j)%flow_solved=.true.
-           map(i,j)%flow_frac=0.
-           map(i,j)%outflow=0.
-           map(i,j)%f_length=0
-           map(i,j)%outflow_cell(1)=i
-           map(i,j)%outflow_cell(2)=j
-        else
-           map(i,j)%ocean=.false.
-           map(i,j)%flow_solved=.false.
-           map(i,j)%flow_frac=1.
-           map(i,j)%outflow=0.
-           map(i,j)%f_length=0
-           map(i,j)%outflow_cell(1)=d1
-           map(i,j)%outflow_cell(2)=d2
-        endif
+         if(map(i,j)%flow_solved) cycle
+         call prof_write
+         call rand_drain(map,i,j)
        enddo
       enddo
-      call prof_exit(2,1)
+
+      call cell_flow(map)
       call prof_write
-
-!      call cell_sink(map)
-
-!      do i=1,d1
-!       do j=1,d2
-!         if(map(i,j)%flow_solved) cycle
-!         call prof_write
-!         call drain_connect(map,i,j)
-!       enddo
-!      enddo
-
-!      call cell_flow(map)
-!      call prof_write
 
       call flow_out(map)
 

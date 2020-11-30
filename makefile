@@ -1,7 +1,7 @@
 VPATH = ../
 
 FC = gfortran -c			#fortran compiler
-LK = gfortran -o ../flow_v2.8 		#program linker
+LK = gfortran -o ../flow_v3.0 		#program linker
 
 OP = -fopenmp -g -O2 -fbacktrace	#compiling options
 
@@ -10,7 +10,8 @@ LINK = $(LK) $(OP)			#Link Command
 
 MODS = parameter_module.o profile_module.o map_module.o
 
-OBJS = cell_sink.o cell_flow.o connect_rad_flow.o output.o
+OBJS = ocean.o frac_calc.o drop_search.o rand_step.o\
+       cell_flow.o output.o
 
 PROG = rivercode.o
 

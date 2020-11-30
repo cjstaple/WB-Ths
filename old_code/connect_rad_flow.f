@@ -30,41 +30,6 @@
       integer :: OMP_GET_THREAD_NUM
 
 !-----------------------------------------------------------------------
-!.....Initialization....................................................
-      if(m(x0,y0)%ocean) then
-         m(x0,y0)%outflow_cell(1)=x0
-         m(x0,y0)%outflow_cell(2)=y0
-         m(x0,y0)%flow_solved=.true.
-         return
-      endif
-      call prof_enter(4,1,'        CELL DRAIN: ')
-      finish=.false.
-      h0=m(x0,y0)%height
-      do i=1,d1
-       do j=1,d2
-         connected(i,j)=.false.
-       enddo
-      enddo
-!.....Initialize Connected Set & Check For Immediate Drop...............
-      do i=-1,1,1
-       do j=-1,1,1
-         p=min(max(x0+i,1),d1)
-         q=min(max(y0+j,1),d2)
-         ht=m(p,q)%height
-         if(ht.le.m(x0,y0)%height) connected(p,q)=.true.
-         if(ht.lt.h0) then
-            h0=ht
-            m(x0,y0)%outflow_cell(1)=p
-            m(x0,y0)%outflow_cell(2)=q
-            m(x0,y0)%flow_solved=.true.
-            finish=.true.
-         endif
-       enddo
-      enddo
-      if(finish) then
-        call prof_exit(4,1)
-        return
-      endif
       call prof_enter(5,1,'       LEVEL DRAIN: ')
 !-----Set Up Parallelization--------------------------------------------
 !$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m,x0,y0,h0,xf,yf,r)
@@ -76,6 +41,11 @@
       call prof_enter(5,tid,'      LEVEL DRAIN: ')
       call srand(cpti)
       r=1
+      do i=1,d1
+       do j=1,d2
+         connected(i,j)=.false.
+       enddo
+      enddo
 
 !.....Find Nearest Drain Point..........................................
       do while(h0.eq.m(x0,y0)%height)

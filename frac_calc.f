@@ -2,7 +2,7 @@
 ! Evaporation & Freezing Subroutine
 !=======================================================================
       
-      subroutine cell_sink(m)
+      subroutine frac_calc(m)
 
       use parameter_module
       use prof_module
