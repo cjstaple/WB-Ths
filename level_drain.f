@@ -126,7 +126,11 @@
          endif
          x = nx
          y = ny
-         h = m(x,y)%height
+         if(m(x,y)%flow_solved) then
+            h=ht
+         else
+            h = m(x,y)%height
+         endif
       enddo !End Pathfinding Algorithm
       xf=nx
       yf=ny
