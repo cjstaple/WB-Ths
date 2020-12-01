@@ -24,20 +24,20 @@
 
 !-----------------------------------------------------------------------
       call prof_enter(7,1,'    DOWN FLOW CALC: ')
-!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m)
-      tid=OMP_GET_THREAD_NUM()
-      tid=tid+2
-      call prof_enter(n_max,tid,'    TOTAL RUN TIME: ')
-      call prof_enter(8,tid,'      ZEROING FLOW: ')
+!!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m)
+!      tid=OMP_GET_THREAD_NUM()
+!      tid=tid+2
+!      call prof_enter(n_max,tid,'    TOTAL RUN TIME: ')
+!      call prof_enter(8,tid,'      ZEROING FLOW: ')
       do i=1,d1
        do j=1,d2
         m(i,j)%outflow = 0.0
        enddo
       enddo
-      call prof_exit(8,tid)
+!      call prof_exit(8,tid)
 
-      call prof_enter(9,tid,'  PROPOGATING FLOW: ')
-!$OMP DO SCHEDULE(DYNAMIC)
+!      call prof_enter(9,tid,'  PROPOGATING FLOW: ')
+!!$OMP DO SCHEDULE(DYNAMIC)
       do i=1,d1
        do j=1,d2
           f_count = 0
@@ -63,10 +63,10 @@
           m(i,j)%f_length = f_count
        enddo
       enddo
-!$OMP END DO
-      call prof_exit(9,tid)
-      call prof_exit(n_max,tid)
-!$OMP END PARaLLEL
+!!$OMP END DO
+!      call prof_exit(9,tid)
+!      call prof_exit(n_max,tid)
+!!$OMP END PARaLLEL
       do i=1,d1
        do j=1,d2
          m(i,j)%outflow=m(i,j)%outflow/(3.60d+02) !Convert units */day
