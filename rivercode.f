@@ -45,7 +45,7 @@
        do j=1,d2
          if(map(i,j)%flow_solved) cycle
          call prof_write
-         call rand_drain(map,i,j)
+         call drain_path(map,i,j)
        enddo
       enddo
 

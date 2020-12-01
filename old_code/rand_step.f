@@ -2,7 +2,7 @@
 !     Flow Pathfinder: Level Drain Random Step
 !=======================================================================
 
-      subroutine rand_drain(m,x0,y0)
+      subroutine rand_drain(m,x0,y0,xf,yf)
 
       use map_module
       use prof_module
@@ -11,7 +11,8 @@
       implicit none
 !-----------------------------------------------------------------------
       type(map_type), dimension(d1,d2) :: m
-      integer :: x0,y0
+      integer,intent(in) :: x0,y0
+      integer,intent(out) :: xf,yf
 !-----------------------------------------------------------------------
 
       integer :: i,j,k,l
@@ -23,9 +24,8 @@
       integer :: cpti
       logical :: set
 
-
 !-----------------------------------------------------------------------
-      call prof_enter(5,1,'       LEVEL DRAIN: ')
+      call prof_enter(5,1,'      RANDOM DRAIN: ')
       call itime(cpt)
       cpti=mod(cpt(1)*cpt(2)*cpt(3),10000)
       call srand(cpti)
@@ -38,26 +38,25 @@
          q=min(max(y0+j,1),d2)
          ht=m(p,q)%height
          if(ht.lt.h0) then
-            m(x0,y0)%outflow_cell(1)=p
-            m(x0,y0)%outflow_cell(2)=q
-            m(x0,y0)%flow_solved=.true.
+            xf=p
+            yf=q
             h0=ht
             set=.true.
          elseif(ht.eq.h0) then
             if(set) then
               rwalk=rand()
               if(rwalk.gt.0.5) then
-                m(x0,y0)%outflow_cell(1)=p
-                m(x0,y0)%outflow_cell(2)=q
+                xf=p
+                yf=q
               endif
             else
-              m(x0,y0)%outflow_cell(1)=p
-              m(x0,y0)%outflow_cell(2)=q
+              xf=p
+              yf=q
               set=.true.
             endif
          endif
        enddo
       enddo
-      m(x0,y0)%flow_solved=.true.
 
+      return
       end subroutine
