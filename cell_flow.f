@@ -19,30 +19,20 @@
       real :: source            !m^3(1 year run)
       integer :: f_count
 
-      integer :: tid
-      integer :: OMP_GET_THREAD_NUM
-
 !-----------------------------------------------------------------------
       call prof_enter(7,1,'    DOWN FLOW CALC: ')
-!!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m)
-!      tid=OMP_GET_THREAD_NUM()
-!      tid=tid+2
-!      call prof_enter(n_max,tid,'    TOTAL RUN TIME: ')
-!      call prof_enter(8,tid,'      ZEROING FLOW: ')
       do i=1,d1
        do j=1,d2
         m(i,j)%outflow = 0.0
        enddo
       enddo
-!      call prof_exit(8,tid)
 
-!      call prof_enter(9,tid,'  PROPOGATING FLOW: ')
-!!$OMP DO SCHEDULE(DYNAMIC)
       do i=1,d1
        do j=1,d2
           f_count = 0
           source = m(i,j)%rain*m(i,j)%flow_frac*647.5
           m(i,j)%outflow = m(i,j)%outflow + source
+          m(i,j)%invol = source
           h = m(i,j)%height
           x0=i
           y0=j
@@ -52,7 +42,7 @@
             x=m(x0,y0)%outflow_cell(1)
             y=m(x0,y0)%outflow_cell(2)
             source = source*0.95
-            m(x,y)%outflow = m(x,y)%outflow+source
+            m(x,y)%outflow = m(x,y)%outflow + source
             h=m(x,y)%height
             x0=x
             y0=y
@@ -63,10 +53,7 @@
           m(i,j)%f_length = f_count
        enddo
       enddo
-!!$OMP END DO
-!      call prof_exit(9,tid)
-!      call prof_exit(n_max,tid)
-!!$OMP END PARaLLEL
+
       do i=1,d1
        do j=1,d2
          m(i,j)%outflow=m(i,j)%outflow/(3.60d+02) !Convert units */day

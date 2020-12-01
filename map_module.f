@@ -12,6 +12,7 @@
          integer :: height !pxl
          integer :: rain   !mm/year
          integer :: temp   !K
+         real :: invol
          real :: flow_frac !Water - Freeze - Evaporate
          real :: outflow
          integer :: f_length
