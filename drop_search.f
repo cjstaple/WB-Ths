@@ -20,8 +20,6 @@
 
 !-----------------------------------------------------------------------
       call prof_enter(4,1,'       DROP SEARCH: ')
-!!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m)
-!!$OMP DO SCHEDULE(STATIC)
       do i=1,d1
        do j=1,d2
          if(m(i,j)%flow_solved) cycle
@@ -41,8 +39,6 @@
          enddo
        enddo
       enddo
-!!$OMP END DO
-!!$OMP END PARALLEL
       call prof_exit(4,1)
 
       end subroutine

@@ -35,7 +35,7 @@
       do i=-1,1
        do j=-1,1
          p=min(max(x0+i,1),d1)
-         q=min(max(y0+j,2),d2)
+         q=min(max(y0+j,1),d2)
          ht=m(p,q)%height
          if(ht.lt.h0) then
             m(x0,y0)%outflow_cell(1)=p
