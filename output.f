@@ -18,19 +18,19 @@
 !-----------------------------------------------------------------------
       call prof_enter(n_max-1,1,'      WRITE OUTPUT: ')
       if(debug) then
-        dname="output/data-a.dat"
+!        dname="output/data-a.dat"
         fname="output/flow-a.dat"
         vname="output/vector-a.dat"
-        open(10,file=dname)
-        write(10,11)
-        write(10,12)
-        do i=1,d1
-         do j=1,d2
-           write(10,13) i,j,m(i,j)%height,m(i,j)%rain,m(i,j)%temp
-         enddo
-        enddo
-        write(10,12)
-        close(10)
+!        open(10,file=dname)
+!        write(10,11)
+!        write(10,12)
+!        do i=1,d1
+!         do j=1,d2
+!           write(10,13) i,j,m(i,j)%height,m(i,j)%rain,m(i,j)%temp
+!         enddo
+!        enddo
+!        write(10,12)
+!        close(10)
 
         open(20,file=fname)
         write(20,21)
@@ -78,7 +78,7 @@
      &   '   OUTFLOW   ',' FLOW LENGTH ')
 22    format(2('|-----'),'|------','|-------','|------------',
      &   '|------------','|------------')
-23    format(2(1x,i5),1x,L6,1x,L7,2(1x,f12.5),1x,i8)
+23    format(2(1x,i5),1x,L6,1x,L7,2(1x,g12.3),1x,i8)
 31    format('  INDICIES  ','   OUTFLOW  ','   VECTOR   ')
 32    format(6('|-----'))
 33    format(6(1x,i5))
