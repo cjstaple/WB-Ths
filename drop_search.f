@@ -21,7 +21,7 @@
 !-----------------------------------------------------------------------
       call prof_enter(4,1,'       DROP SEARCH: ')
 !$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m)
-!$OMP DO SCHEDULE(STATIC) COLLAPSE(2)
+!$OMP DO SCHEDULE(STATIC)
       do i=1,d1
        do j=1,d2
          if(m(i,j)%flow_solved) cycle

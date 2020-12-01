@@ -36,7 +36,9 @@
       call prof_write
 
       call ocean_search(map)
+
       call frac_calc(map)
+
       call drop_search(map)
 
       do i=1,d1

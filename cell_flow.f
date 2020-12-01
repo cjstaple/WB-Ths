@@ -13,10 +13,10 @@
       type(map_type), dimension(d1,d2) :: m
 
 !-----------------------------------------------------------------------
-      integer :: i,j !indices
-      integer :: x,y,x0,y0!coordinates
-      integer :: h   !current height
-      real :: source !m^3(1 year run)
+      integer :: i,j            !indices
+      integer :: x,y,x0,y0      !coordinates
+      integer :: h              !current height
+      real :: source            !m^3(1 year run)
       integer :: f_count
 
       integer :: tid
@@ -29,30 +29,24 @@
       tid=tid+2
       call prof_enter(n_max,tid,'    TOTAL RUN TIME: ')
       call prof_enter(8,tid,'      ZEROING FLOW: ')
-!$OMP DO SCHEDULE(STATIC) COLLAPSE(2)
       do i=1,d1
        do j=1,d2
         m(i,j)%outflow = 0.0
        enddo
       enddo
-!$OMP END DO
       call prof_exit(8,tid)
 
       call prof_enter(9,tid,'  PROPOGATING FLOW: ')
-!$OMP DO SCHEDULE(DYNAMIC) COLLAPSE(2)
+!$OMP DO SCHEDULE(DYNAMIC)
       do i=1,d1
        do j=1,d2
           f_count = 0
-          source = m(i,j)%rain*(647.5)*m(i,j)%flow_frac
+          source = m(i,j)%rain*m(i,j)%flow_frac*647.5
           m(i,j)%outflow = m(i,j)%outflow + source
           h = m(i,j)%height
           x0=i
           y0=j
-          if(m(i,j)%flow_solved) then
-             continue
-          else
-             call rand_drain(m,i,j)
-          endif
+          if(.not.m(i,j)%flow_solved) call rand_drain(m,i,j)
           do while(h.gt.0)
             f_count = f_count + 1
             x=m(x0,y0)%outflow_cell(1)
@@ -65,27 +59,19 @@
             if((x0.eq.i).and.(y0.eq.j)) h=0
             if(source.lt.1.0) h=0
             if(f_count.gt.1000) h=0
-            if(mod(f_count,25).eq.0) then
-!$OMP CRITICAL
-               call prof_write
-!$OMP END CRITICAL
-            endif
           enddo
           m(i,j)%f_length = f_count
        enddo
       enddo
 !$OMP END DO
-
-!$OMP DO SCHEDULE(STATIC) COLLAPSE(2)
+      call prof_exit(9,tid)
+      call prof_exit(n_max,tid)
+!$OMP END PARaLLEL
       do i=1,d1
        do j=1,d2
          m(i,j)%outflow=m(i,j)%outflow/(3.60d+02) !Convert units */day
        enddo
       enddo
-!$OMP END DO
-      call prof_exit(9,tid)
-      call prof_exit(n_max,tid)
-!$OMP END PARALLEL
       call prof_exit(7,1)
 
       return

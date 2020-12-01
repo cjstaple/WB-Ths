@@ -41,18 +41,19 @@
             m(x0,y0)%outflow_cell(1)=p
             m(x0,y0)%outflow_cell(2)=q
             m(x0,y0)%flow_solved=.true.
-            return
+            h0=ht
+            set=.true.
          elseif(ht.eq.h0) then
             if(set) then
-               rwalk=rand()
-               if(rwalk.gt.0.5) then
-                 m(x0,y0)%outflow_cell(1)=p
-                 m(x0,y0)%outflow_cell(2)=q
-               endif
+              rwalk=rand()
+              if(rwalk.gt.0.5) then
+                m(x0,y0)%outflow_cell(1)=p
+                m(x0,y0)%outflow_cell(2)=q
+              endif
             else
-               m(x0,y0)%outflow_cell(1)=p
-               m(x0,y0)%outflow_cell(2)=q
-               set=.true.
+              m(x0,y0)%outflow_cell(1)=p
+              m(x0,y0)%outflow_cell(2)=q
+              set=.true.
             endif
          endif
        enddo

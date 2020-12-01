@@ -29,7 +29,7 @@
          else
             m(i,j)%ocean=.false.
             m(i,j)%flow_solved=.false.
-            m(i,j)%flow_frac=1.
+            m(i,j)%flow_frac=0.5
             m(i,j)%outflow_cell(1)=d1
             m(i,j)%outflow_cell(2)=d2
          endif
