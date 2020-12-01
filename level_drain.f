@@ -11,7 +11,7 @@
 
       implicit none
 !-----------------------------------------------------------------------
-      type(map_type) :: m
+      type(map_type),dimension(d1,d2) :: m
       integer :: x0,y0
 !-----------------------------------------------------------------------
       
@@ -120,7 +120,7 @@
           enddo
          enddo
 
-         if(((nx.eq.x).and.(ny.eq.y)).or.(solved(nx,ny)) then
+         if(((nx.eq.x).and.(ny.eq.y)).or.(solved(nx,ny))) then
             !Print Error Message
             return
          endif
