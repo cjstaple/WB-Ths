@@ -16,8 +16,6 @@
       integer :: i,j
 !-----------------------------------------------------------------------
       call prof_enter(2,1,'       OCEAN CHECK: ')
-!$OMP PARALLEL DEFAULT(PRIVATE) SHARED(m)
-!$OMP DO SCHEDULE(STATIC) COLLAPSE(2)
       do i=1,d1
        do j=1,d2
          m(i,j)%outflow=0.
@@ -37,8 +35,6 @@
          endif
        enddo
       enddo
-!$OMP END DO
-!$OMP END PARALLEL
       call prof_exit(2,1)
       call prof_write
 

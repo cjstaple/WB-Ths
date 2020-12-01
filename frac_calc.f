@@ -32,7 +32,7 @@
       do i=1,d1
        do j=1,d2
           t_av = 1.0d+00*(m(i,j)%temp)
-          m(i,j)%flow_frac = 1.0*(exp(-(t_ice/t_av))-exp(-(t_vap/t_av)))
+          m(i,j)%flow_frac = 0.543-0.00073513*(t_av-290.)
        enddo
       enddo
 !$OMP END DO
