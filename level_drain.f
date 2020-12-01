@@ -7,7 +7,7 @@
 
       use parameter_module
       use map_module
-      use profile_module
+      use prof_module
 
       implicit none
 !-----------------------------------------------------------------------
@@ -19,7 +19,7 @@
       integer, dimension(d1,d2,2) :: feeder     !Prior Position in chain
       integer, dimension(9,2) :: cand           !Neighbor Storage
       logical, dimension(d1,d2) :: solved       !Prevent Revisiting
-      logical, dimension(d1,d2) :: active       !Faster cycling state
+      logical, dimension(d1,d2) :: activ        !Faster cycling state
 
       integer :: x,y            !Coordinates of Current Node
       integer :: tx,ty          !Coordinates of Test Node
@@ -42,7 +42,7 @@
       do i=1,d1
        do j=1,d2
          solved(i,j)=.false.
-         active(i,j)=.false.
+         activ(i,j)=.false.
          dist(i,j)=1000000000
          feeder(i,j,1)=0
          feeder(i,j,2)=0
@@ -54,7 +54,7 @@
 
 !.....Set-Up Starting Node..............................................
       solved(x0,y0)=.true.
-      active(x0,y0)=.true.
+      activ(x0,y0)=.true.
       dist(x0,y0)=0
       feeder(x0,y0,1)=x0
       feeder(x0,y0,2)=y0
@@ -89,7 +89,7 @@
               dist(tx,ty)=dist(x,y)+1
               feeder(tx,ty,1)=x
               feeder(tx,ty,2)=y
-              active(tx,ty)=.true.
+              activ(tx,ty)=.true.
            endif
          enddo
 !........Find Nearest Unsolved Node Or Drain Point......................
@@ -97,7 +97,7 @@
          do i=1,d1
           do j=1,d2
             if(solved(i,j)) cycle
-            if(active(i,j)) then
+            if(activ(i,j)) then
               if(m(i,j)%height.lt.h) then
                 h=m(i,j)%height
                 mindis=dist(i,j)
