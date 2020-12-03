@@ -14,6 +14,7 @@
 
       type(map_type), dimension(:,:),allocatable :: map
       integer :: i,j,k,a,b
+      integer :: nsol,ncyc
 
 !-----Import Map Data---------------------------------------------------
       call prof_initial
@@ -34,18 +35,37 @@
       close(3)
       call prof_exit(1,1)
       call prof_write
+      nsol=0
+      ncyc=0
 
       call ocean_search(map)
 
       call frac_calc(map)
 
       call drop_search(map)
+      do i=1,d1
+       do j=1,d2
+         if(map(i,j)%flow_solved) nsol=nsol+1
+       enddo
+      enddo
+      psol=1.0d+00*nsol/(d1*d2)
 
       do i=1,d1
        do j=1,d2
+         ncyc=ncyc+1
          if(map(i,j)%flow_solved) cycle
          call prof_write
          call drain_path(map,i,j)
+         if(ncyc.gt.100000) then
+           ncyc=0
+           nsol=0
+           do a=1,d1
+            do b=1,d2
+              if(map(a,b)%flow_solved) nsol=nsol+1
+            enddo
+           enddo
+           psol=1.0d+00*nsol/(d1*d2)
+         endif
        enddo
       enddo
 

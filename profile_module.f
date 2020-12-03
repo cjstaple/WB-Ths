@@ -4,6 +4,8 @@
 
       module prof_module
 
+      use parameter_module
+
       implicit none
 
       integer, parameter :: n_max=20            !Max Number of Trackers
@@ -127,23 +129,25 @@
       write(12,10)
       write(12,15)
       write(10,10)
-      do t=2,t_max
-       write(12,14) 'Profile for Thread: ',t
-       write(12,10)
-       write(12,11)
-       write(12,12) 'Interval Name','Calls','TOTAL CPU','Average CPU',
-     &   '% CPU_t','Total Wall', 'Average Wall', '% Wall_t'
-       write(12,11)
-       do n=1,n_max
-          if(tag(n,t).gt.0) then
-           write(12,13) leg(n),tag(n,t),dt(n,t),dt(n,t)/float(tag(n,t)),
-     &       100.*dt(n,t)/dt(n_max,t),wct(n,t),wct(n,t)/float(tag(n,t)),
-     &       100.*wct(n,t)/wct(n_max,t)
-          endif
-       enddo
-       write(12,11)
-       write(12,10)
-      enddo
+
+      write(10,17) 100.*psol
+!      do t=2,t_max
+!       write(12,14) 'Profile for Thread: ',t
+!       write(12,10)
+!       write(12,11)
+!       write(12,12) 'Interval Name','Calls','TOTAL CPU','Average CPU',
+!     &   '% CPU_t','Total Wall', 'Average Wall', '% Wall_t'
+!       write(12,11)
+!       do n=1,n_max
+!          if(tag(n,t).gt.0) then
+!           write(12,13) leg(n),tag(n,t),dt(n,t),dt(n,t)/float(tag(n,t)),
+!     &       100.*dt(n,t)/dt(n_max,t),wct(n,t),wct(n,t)/float(tag(n,t)),
+!     &       100.*wct(n,t)/wct(n_max,t)
+!          endif
+!       enddo
+!       write(12,11)
+!       write(12,10)
+!      enddo
       close(12)
 !.......................................................................
 10    format('  ')
@@ -154,6 +158,7 @@
 14    format(1x,a22,i4)
 15    format(72('='))
 16    format(10x,a30)
+17    format(1x,f7.3,'% of cells have been solved')
 
       end subroutine prof_write
 
