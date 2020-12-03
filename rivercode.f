@@ -49,6 +49,7 @@
        enddo
       enddo
       psol=1.0d+00*nsol/(d1*d2)
+      call flow_out(map)
 
       do i=1,d1
        do j=1,d2
@@ -68,6 +69,7 @@
          endif
        enddo
       enddo
+      call flow_out(map)
 
       call cell_flow(map)
       call prof_write
