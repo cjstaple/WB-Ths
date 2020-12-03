@@ -39,6 +39,7 @@
 !-----------------------------------------------------------------------
       if(m(x0,y0)%ocean) return
 !.....Initialize........................................................
+      call prof_enter(5,1,' SHORT PATH FINDER: ')
       do i=1,d1
        do j=1,d2
          solved(i,j)=.false.
@@ -160,6 +161,7 @@
       enddo
       deallocate(px)
       deallocate(py)
+      call prof_exit(5,1)
 
       end subroutine
 !=======================================================================
