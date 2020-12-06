@@ -20,6 +20,12 @@
          ! Catagory Flags & Indices
          logical :: ocean
          logical :: flow_solved
+         ! Flow Rate
+         real :: out_rate
+         real :: vol_0
+         real :: xA
+         real :: dep
+         logical :: rate_solved
       end type
 
 !-----Layer Functions---------------------------------------------------

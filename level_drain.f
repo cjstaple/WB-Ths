@@ -123,6 +123,8 @@
 
          if(((nx.eq.x).and.(ny.eq.y)).or.(solved(nx,ny))) then
             !Print Error Message
+            m(x0,y0)%outflow_cell(1)=x0
+            m(x0,y0)%outflow_cell(2)=y0
             return
          endif
          x = nx
@@ -147,11 +149,6 @@
          nx=feeder(x,y,1)
          ny=feeder(x,y,2)
       enddo
-!.....Make sure 2nd to last point already drains to last point..........
-      if(.not.m(px(k-1),py(k-1))%flow_solved) then
-        write(*,*) 'Drained through point that isnt draining'
-        stop
-      endif
 !.....Drain the Entire path.............................................
       do i=1,k-1
         if(m(px(i),py(i))%flow_solved) cycle

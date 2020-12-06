@@ -20,6 +20,7 @@
        do j=1,d2
          m(i,j)%outflow=0.
          m(i,j)%f_length=0
+         m(i,j)%rate_solved=.false.
          if(m(i,j)%height.eq.0) then
             m(i,j)%ocean=.true.
             m(i,j)%flow_solved=.true.
@@ -29,9 +30,6 @@
          else
             m(i,j)%ocean=.false.
             m(i,j)%flow_solved=.false.
-!            m(i,j)%flow_frac=0.5
-!            m(i,j)%outflow_cell(1)=d1
-!            m(i,j)%outflow_cell(2)=d2
          endif
        enddo
       enddo

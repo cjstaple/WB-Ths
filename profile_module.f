@@ -128,9 +128,9 @@
       write(12,11)
       write(12,10)
       write(12,15)
-      write(10,10)
+      write(12,10)
 
-      write(10,17) 100.*psol
+      write(12,17) 100.*psol
 !      do t=2,t_max
 !       write(12,14) 'Profile for Thread: ',t
 !       write(12,10)
