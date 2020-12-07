@@ -18,19 +18,19 @@
 !-----------------------------------------------------------------------
       call prof_enter(n_max-1,1,'      WRITE OUTPUT: ')
       if(debug) then
-!        dname="output/data-a.dat"
+        dname="output/state-a.dat"
         fname="output/flow-a.dat"
         vname="output/vector-a.dat"
-!        open(10,file=dname)
-!        write(10,11)
-!        write(10,12)
-!        do i=1,d1
-!         do j=1,d2
-!           write(10,13) i,j,m(i,j)%height,m(i,j)%rain,m(i,j)%temp
-!         enddo
-!        enddo
-!        write(10,12)
-!        close(10)
+        open(10,file=dname)
+        write(10,11)
+        write(10,12)
+        do i=1,d1
+         do j=1,d2
+           write(10,13) i,j,m(i,j)%out_rate,m(i,j)%vol_0,m(i,j)%dep
+         enddo
+        enddo
+        write(10,12)
+        close(10)
 
         open(20,file=fname)
         write(20,21)
@@ -71,9 +71,9 @@
       endif
 
       call prof_exit(n_max-1,1)
-11    format('  INDICIES  ',' HEIGHT ','  RAIN  ','  TEMP  ')
+11    format('  INDICIES  ','  RATE  ',' VOLUME ',' RDEPTH ')
 12    format(2('|-----'),3('|--------'))
-13    format(2(1x,i5),3(1x,i8))
+13    format(2(1x,i5),3(1x,f8.3))
 21    format('  INDICIES  ',' OCEAN ',' SOLVED ','    % FLOW   ',
      &   '   OUTFLOW   ',' FLOW LENGTH ')
 22    format(2('|-----'),'|------','|-------','|------------',

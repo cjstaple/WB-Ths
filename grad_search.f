@@ -22,6 +22,7 @@
       call prof_enter(8,1,'    LOCAL GRADIENT: ')
       do i=1,d1
        do j=1,d2
+         if(m(i,j)%ocean) cycle
          r=1
          dzx = 0
          dxy = 0
@@ -72,6 +73,7 @@
        enddo
       enddo
       call prof_exit(8,1)
+      call prof_write
 
       return
       end subroutine

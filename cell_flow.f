@@ -60,6 +60,7 @@
        enddo
       enddo
       call prof_exit(7,1)
+      call prof_write
 
       return
       end subroutine

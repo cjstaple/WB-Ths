@@ -11,7 +11,7 @@ LINK = $(LK) $(OP)			#Link Command
 MODS = parameter_module.o profile_module.o map_module.o
 
 OBJS = ocean.o frac_calc.o drop_search.o level_drain.o\
-       cell_flow.o output.o
+       cell_flow.o output.o grad_search.o rate_flow.o
 
 PROG = rivercode.o
 
