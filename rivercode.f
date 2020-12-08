@@ -15,6 +15,7 @@
       type(map_type), dimension(:,:),allocatable :: map
       integer :: i,j,k,a,b
       integer :: nsol,ncyc
+      logical :: restart
 
 !-----Import Map Data---------------------------------------------------
       call prof_initial
@@ -40,6 +41,7 @@
 
       call ocean_search(map) !Search for the Ocean Cells
       call frac_calc(map) !Calculate fraction of water that flows out
+      call check_restart(map,restart) ! Read in Path data if it exists
 
       call drop_search(map) !Calculate Flows along slope edges
 !.....Determine Fraction of Map That has been solved....................

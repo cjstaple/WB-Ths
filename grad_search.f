@@ -25,7 +25,7 @@
          if(m(i,j)%ocean) cycle
          r=1
          dzx = 0
-         dxy = 0
+         dzy = 0
          rep = .true.
          adj = .true.
          dzdx = 0.

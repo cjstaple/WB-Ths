@@ -14,7 +14,7 @@
 
 !-----------------------------------------------------------------------
       integer :: i,j,k,l
-      real :: p,q
+      integer :: p,q
       real :: rout
       logical :: rep
 !-----------------------------------------------------------------------
@@ -39,7 +39,7 @@
             p = min(max(i+k,1),d1)
             q = min(max(j+l,1),d2)
             if((m(p,q)%outflow_cell(1).eq.i).and.
-     &         (m(p,q)%outflow_cell(2).eq.j) then
+     &         (m(p,q)%outflow_cell(2).eq.j)) then
               m(i,j)%vol_0 = m(i,j)%vol_0 + 
      &                       m(p,q)%vol_0*m(p,q)%out_rate/rout
             endif
