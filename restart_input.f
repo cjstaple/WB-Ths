@@ -54,6 +54,7 @@
          enddo
       endif
 
+      call prof_exit(n_max-2,1)
 23    format(2(1x,i5),1x,L6,1x,L7,2(1x,g12.3),1x,i8)
 33    format(6(1x,i5))
       
