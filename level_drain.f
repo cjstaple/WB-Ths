@@ -2,7 +2,6 @@
 !     Flow Pathfinder: Level Path
 !=======================================================================
 
-
       subroutine drain_path(m,x0,y0)
 
       use parameter_module
@@ -27,6 +26,7 @@
       integer :: xf,yf          !Coordinates of Drain Node
       integer :: mindis         !Distance to Closest Unsolved Node
       integer :: h0,h,ht        !Height Variables
+      real :: g0,g              !Gradient Variables
 
       real :: rn
       integer :: cpti
@@ -60,7 +60,9 @@
       feeder(x0,y0,1)=x0
       feeder(x0,y0,2)=y0
       h0= m(x0,y0)%height
+      g0= m(x0,y0)%out_rate
       h = h0
+      g = g0
       ht= h0-1
       x = x0
       nx= x0
@@ -102,18 +104,27 @@
               if(m(i,j)%height.lt.h) then
                 h=m(i,j)%height
                 mindis=dist(i,j)
+                g0=m(i,j)%out_rate
                 nx=i
                 ny=j
-              else
+              elseif(m(i,j)%height.eq.h) then!needed to stay @ drain pt
                 if(dist(i,j).lt.mindis) then
                    mindis=dist(i,j)
+                   g0=m(i,j)%out_rate
                    nx=i
                    ny=j
                 elseif(dist(i,j).eq.mindis) then
-                   rn=rand()
-                   if(rn.gt.0.5) then
-                     nx=i
-                     ny=j
+                   g=m(i,j)%out_rate
+                   if(g.gt.g0) then
+                      g0=g
+                      nx=i
+                      ny=j
+                   else if (g.eq.g0) then
+                     rn=rand()
+                     if(rn.gt.0.5) then
+                       nx=i
+                       ny=j
+                     endif
                    endif
                 endif
               endif

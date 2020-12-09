@@ -56,7 +56,7 @@
 
       do i=1,d1
        do j=1,d2
-         m(i,j)%outflow=m(i,j)%outflow/(3.60d+02) !Convert units */day
+         m(i,j)%outflow=m(i,j)%outflow/(3.60d+02) !Convert units m^3/day
        enddo
       enddo
       call prof_exit(7,1)

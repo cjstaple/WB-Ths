@@ -41,6 +41,7 @@
 
       call ocean_search(map) !Search for the Ocean Cells
       call frac_calc(map) !Calculate fraction of water that flows out
+      call grad(map) !Calculates Local Cell Gradients \& Flow Rates
       call check_restart(map,restart) ! Read in Path data if it exists
 
       call drop_search(map) !Calculate Flows along slope edges
@@ -60,7 +61,7 @@
          if(map(i,j)%flow_solved) cycle
          call prof_write
          call drain_path(map,i,j)
-         if(ncyc.gt.50000) then
+         if((ncyc.gt.50000).or.((i.eq.d1).and.(j.eq.d2))) then
            ncyc=0
            nsol=0
            do a=1,d1
@@ -75,10 +76,7 @@
       call flow_out(map) !Outputs Data
 
       call cell_flow(map) !Calculates Annual Flow Throughput
-      call flow_out(map) !Outputs Data
-
-      call grad(map) !Calculates Local Gradient and computes output rate
-      call flow_rate(map) !Calculate Steady-State
+      call flow_rate(map) !Calculate Steady-State Volumes
       call flow_out(map) !Outputs Data
 
       call prof_write
