@@ -12,9 +12,9 @@
 
 !-----------------------------------------------------------------------
       type(map_type),dimension(d1,d2) :: m
-      integer :: i,j,k,l,r
-      integer :: dzx,dzy,im,ip,jm,jp
-      logical :: rep,adj
+      integer :: i,j,k,l,r,r2
+      integer :: dzx,dzy,im,ip,jm,jp,imm,ipp,jmm,jpp
+      logical :: rep
       real :: dzdx,dzdy,dzdr
       real :: norm, mu, rout
 !-----------------------------------------------------------------------
@@ -23,30 +23,30 @@
       do i=1,d1
        do j=1,d2
          if(m(i,j)%ocean) cycle
-         r=1
+         r=0
          dzx = 0
          dzy = 0
          rep = .true.
-         adj = .true.
          dzdx = 0.
          dzdy = 0.
          do while(rep)
+           r=r+1
+           r2=2*r
            im=min(max(i-r,1),d1)
+           imm=min(max(i-r2,1),d1)
            ip=min(max(i+r,1),d1)
+           ipp=min(max(i+r2,1),d1)
            jm=min(max(j-r,1),d2)
+           jmm=min(max(j-r2,1),d2)
            jp=min(max(j+r,1),d2)
-           dzx=abs(m(ip,j)%height-m(im,j)%height)
-           dzy=abs(m(i,jp)%height-m(i,jm)%height)
-           if((dzx.gt.0).or.(dzy.gt.0)) then
-             if(adj) then
-               adj=.false.
-             else
-               rep=.false.
-             endif
-           endif
-           r = r+1
-           dzdx = dzdx + 1.0d+00*dzx/(ip-im)
-           dzdy = dzdy + 1.0d+00*dzy/(jp-jm)
+           jpp=min(max(j+r2,1),d2)
+           dzx=8*abs(m(ip,j)%height-m(im,j)%height)+
+     &            abs(m(ipp,j)%height-m(imm,j)%height)
+           dzy=8*abs(m(i,jp)%height-m(i,jm)%height)
+     &            abs(m(i,jpp)%height-m(i,jmm)%height)
+           dzdx = dzdx + 1.0d+00*dzx/(12.*r)
+           dzdy = dzdy + 1.0d+00*dzy/(12.*r)
+           if((dzdx.gt.0.).or.(dzdy.gt.0.)) rep=.false.
          enddo
          if((dzdx.eq.0.).and.(dzdy.eq.0.)) then
            write(*,*) 'Gradient Search Error'
