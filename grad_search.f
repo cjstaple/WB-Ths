@@ -16,7 +16,7 @@
       integer :: dzx,dzy,im,ip,jm,jp,imm,ipp,jmm,jpp
       logical :: rep
       real :: dzdx,dzdy,dzdr
-      real :: mu, qo rout
+      real :: mu, qo, rout
 !-----------------------------------------------------------------------
 
       call prof_enter(8,1,'    LOCAL GRADIENT: ')
@@ -67,7 +67,7 @@
          else
            qo = 1./sqrt(mu)
          endif
-         rout = (qo**2)/(1+q0**2)
+         rout = (qo**2)/(1+qo**2)
          m(i,j)%out_rate = rout
        enddo
       enddo
