@@ -16,7 +16,7 @@
       integer :: dzx,dzy,im,ip,jm,jp,imm,ipp,jmm,jpp
       logical :: rep
       real :: dzdx,dzdy,dzdr
-      real :: norm, mu, rout
+      real :: mu, qo rout
 !-----------------------------------------------------------------------
 
       call prof_enter(8,1,'    LOCAL GRADIENT: ')
@@ -42,7 +42,7 @@
            jpp=min(max(j+r2,1),d2)
            dzx=8*abs(m(ip,j)%height-m(im,j)%height)+
      &            abs(m(ipp,j)%height-m(imm,j)%height)
-           dzy=8*abs(m(i,jp)%height-m(i,jm)%height)
+           dzy=8*abs(m(i,jp)%height-m(i,jm)%height)+
      &            abs(m(i,jpp)%height-m(i,jmm)%height)
            dzdx = dzdx + 1.0d+00*dzx/(12.*r)
            dzdy = dzdy + 1.0d+00*dzy/(12.*r)
@@ -61,14 +61,13 @@
            write(*,*) 'jp  = ', jp
            stop
          endif
-         if((dzdx.eq.0.).or.(dzdy.eq.0.)) then
-            dzdr = max(dzdx,dzdy)
-            rout = dzdr/(1+dzdr)
+         mu = (dzdx**2*dzdy**2)/(dzdx**2+dzdy**2)
+         if(mu.eq.0.) then
+           qo = 1./max(dzdx,dzdy)
          else
-            dzdr = dzdx*dzdy
-            norm = sqrt(dzdx**2. + dzdy**2.)
-            rout = dzdr/(norm+dzdr)
+           qo = 1./sqrt(mu)
          endif
+         rout = (qo**2)/(1+q0**2)
          m(i,j)%out_rate = rout
        enddo
       enddo
