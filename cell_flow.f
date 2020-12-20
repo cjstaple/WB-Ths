@@ -30,9 +30,8 @@
       do i=1,d1
        do j=1,d2
           f_count = 0
-          source = m(i,j)%rain*m(i,j)%flow_frac*647.5
+          source = m(i,j)%rain*m(i,j)%flow_frac
           m(i,j)%outflow = m(i,j)%outflow + source
-          m(i,j)%invol = source
           h = m(i,j)%height
           x0=i
           y0=j
@@ -44,11 +43,11 @@
             source = source*0.975
             m(x,y)%outflow = m(x,y)%outflow + source
             h=m(x,y)%height
+            m(x,y)%d_px=m(x,y)%d_px+1
             x0=x
             y0=y
             if((x0.eq.i).and.(y0.eq.j)) h=0
-            if(source.lt.1.0) h=0
-            if(f_count.gt.1000) h=0
+            if(source.lt.0.1) h=0
           enddo
           m(i,j)%f_length = f_count
        enddo
@@ -56,7 +55,7 @@
 
       do i=1,d1
        do j=1,d2
-         m(i,j)%outflow=m(i,j)%outflow/(3.60d+02) !Convert units m^3/day
+         m(i,j)%outflow=m(i,j)%outflow/(3.60d+02)/(8.64d+04) !m^3/s
        enddo
       enddo
       call prof_exit(7,1)

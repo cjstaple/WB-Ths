@@ -71,9 +71,9 @@
       endif
 
       call prof_exit(n_max-1,1)
-11    format('  INDICIES  ','  RATE  ',' VOLUME ',' RDEPTH ')
-12    format(2('|-----'),3('|--------'))
-13    format(2(1x,i5),3(1x,f8.3))
+11    format('  INDICIES  ','  RATE  ','  VOLUME  ','  RDEPTH  ')
+12    format(2('|-----'),'|-------',2('|---------'))
+13    format(2(1x,i5),1x,f7.5,2(1x,g9.2))
 21    format('  INDICIES  ',' OCEAN ',' SOLVED ','    % FLOW   ',
      &   '   OUTFLOW   ',' FLOW LENGTH ')
 22    format(2('|-----'),'|------','|-------','|------------',

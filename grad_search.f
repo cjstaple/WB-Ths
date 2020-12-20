@@ -44,8 +44,8 @@
      &            abs(m(ipp,j)%height-m(imm,j)%height)
            dzy=8*abs(m(i,jp)%height-m(i,jm)%height)+
      &            abs(m(i,jpp)%height-m(i,jmm)%height)
-           dzdx = dzdx + 1.0d+00*dzx/(12.*r)
-           dzdy = dzdy + 1.0d+00*dzy/(12.*r)
+           dzdx = dzdx + (3.1d-02*dzx/(12.*r))
+           dzdy = dzdy + (3.1d-02*dzy/(12.*r))
            if((dzdx.gt.0.).or.(dzdy.gt.0.)) rep=.false.
          enddo
          if((dzdx.eq.0.).and.(dzdy.eq.0.)) then
@@ -61,13 +61,9 @@
            write(*,*) 'jp  = ', jp
            stop
          endif
-         mu = (dzdx**2*dzdy**2)/(dzdx**2+dzdy**2)
-         if(mu.eq.0.) then
-           qo = 1./max(dzdx,dzdy)
-         else
-           qo = 1./sqrt(mu)
-         endif
-         rout = (qo**2)/(1+qo**2)
+         dzdr = sqrt(dzdx**2 + dzdy**2)
+         rout = (5.0d+01)*dzdr**2/(1+dzdr**2)
+         m(i,j)%grad = dzdr
          m(i,j)%out_rate = rout
        enddo
       enddo

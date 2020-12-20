@@ -9,23 +9,25 @@
       implicit none
 
       type map_type
-         integer :: height !pxl
-         integer :: rain   !mm/year
-         integer :: temp   !K
-         real :: invol
-         real :: flow_frac !Water - Freeze - Evaporate
-         real :: outflow
-         integer :: f_length
-         integer, dimension(2) :: outflow_cell
-         ! Catagory Flags & Indices
+         ! Catagory Flags
          logical :: ocean
          logical :: flow_solved
+         ! Cell Properties
+         integer :: height   ! [px]
+         real :: elev        ! Elevation [m]
+         real :: rain        ! [m^3/yr]
+         integer :: temp     ! [K]
+         real :: flow_frac   ! Water - Freeze - Evaporate
+         real :: outflow     ! Cell Discharge m^3/s
+         integer :: f_length ! Number of px this flows into
+         integer :: d_px     ! Number of px that flow through this one
+         integer, dimension(2) :: outflow_cell
          ! Flow Rate
-         real :: out_rate
-         real :: vol_0
-         real :: xA
-         real :: dep
-         logical :: rate_solved
+         real :: grad        ! Local Gradient
+         real :: out_rate    ! Pixel drainage [px/s]
+         real :: vol_0       ! Steady State Volume [m^3]
+         real :: xA          ! X-Area of river [m^2]
+         real :: dep         ! Approximate Depth
       end type
 
 !-----Layer Functions---------------------------------------------------

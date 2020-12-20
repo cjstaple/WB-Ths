@@ -20,21 +20,7 @@
 !-----Import Map Data---------------------------------------------------
       call prof_initial
       allocate(map(d1,d2))
-      call prof_enter(1,1,'      DATA READ-IN: ')
-      open(1,file="htab-a.dat")
-      open(2,file="rtab-a.dat")
-      open(3,file="ttab-a.dat")
-      do i=1,d1
-       do j=1,d2
-        read(1,*) a, b, map(i,j)%height !pxls
-        read(2,*) a, b, map(i,j)%rain   !mm/year
-        read(3,*) a, b, map(i,j)%temp   !K
-       enddo
-      enddo
-      close(1)
-      close(2)
-      close(3)
-      call prof_exit(1,1)
+      call readin(map) !Read input data from files
       call prof_write !Code Profiling
       nsol=0
       ncyc=0
