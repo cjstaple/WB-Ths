@@ -35,15 +35,15 @@
               g=m(p,q)%out_rate
               if(g.gt.g0) then
                  g0=g
-                 m(i,j)%outflow_cell(1)=p
-                 m(i,j)%outflow_cell(2)=q
+                 m(i,j)%d_cell(1)=p
+                 m(i,j)%d_cell(2)=q
               endif
             endif
             if(ht.lt.h0) then
               h0=ht
               g0=m(p,q)%out_rate
-              m(i,j)%outflow_cell(1)=p
-              m(i,j)%outflow_cell(2)=q
+              m(i,j)%d_cell(1)=p
+              m(i,j)%d_cell(2)=q
               m(i,j)%flow_solved=.true.
             endif
           enddo

@@ -13,7 +13,7 @@
 !-----Local Variable Definitions----------------------------------------
 
       type(map_type), dimension(:,:),allocatable :: map
-      integer :: i,j,k,a,b,nsol
+      integer :: i,j,k,a,b,ncyc
       logical :: restart
 
 !-----Import Map Data---------------------------------------------------

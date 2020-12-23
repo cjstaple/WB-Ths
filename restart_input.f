@@ -48,8 +48,8 @@
          do i=1,d1
           do j=1,d2
             read(30,33) k,l,u,v,a,b
-            m(k,l)%outflow_cell(1)=u
-            m(k,l)%outflow_cell(2)=v
+            m(k,l)%d_cell(1)=u
+            m(k,l)%d_cell(2)=v
           enddo
          enddo
       endif

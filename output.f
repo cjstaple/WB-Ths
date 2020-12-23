@@ -44,17 +44,6 @@
         write(20,22)
         close(20)
       else
-        open(20,file=fname)
-        write(20,21)
-        write(20,22)
-        do i=1,d1
-         do j=1,d2
-           write(20,23) i,j,m(i,j)%ocean,m(i,j)%flow_solved,
-     &        m(i,j)%flow_frac,m(i,j)%outflow,m(i,j)%f_length
-         enddo
-        enddo
-        write(20,22)
-        close(20)
       endif
 
       call prof_exit(n_max-1,1)
