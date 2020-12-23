@@ -20,13 +20,13 @@
       if(debug) then
         dname="output/state-a.dat"
         fname="output/flow-a.dat"
-        vname="output/vector-a.dat"
         open(10,file=dname)
         write(10,11)
         write(10,12)
         do i=1,d1
          do j=1,d2
-           write(10,13) i,j,m(i,j)%out_rate,m(i,j)%vol_0,m(i,j)%dep
+           write(10,13) i,j,m(i,j)%dep,m(i,j)%xA,m(i,j)%vol_s,
+     &       m(i,j)%vel_out,m(i,j)%grad,m(i,j)%Ax,m(i,j)%v_o
          enddo
         enddo
         write(10,12)
@@ -37,25 +37,12 @@
         write(20,22)
         do i=1,d1
          do j=1,d2
-           write(20,23) i,j,m(i,j)%ocean,m(i,j)%flow_solved,
-     &        m(i,j)%flow_frac,m(i,j)%outflow,m(i,j)%f_length
+           write(20,23) i,j,m(i,j)%flow_frac,m(i,j)%c_dis,
+     &        m(i,j)%c_acc,m(i,j)%outflow
          enddo
         enddo
         write(20,22)
         close(20)
-
-        open(30,file=vname)
-        write(30,31)
-        write(30,32)
-        do i=1,d1
-         do j=1,d2
-           u=m(i,j)%outflow_cell(1)
-           v=m(i,j)%outflow_cell(2)
-           write(30,33) i,j,u,v,u-i,v-j
-         enddo
-        enddo
-        write(30,32)
-        close(30)
       else
         open(20,file=fname)
         write(20,21)
@@ -71,16 +58,17 @@
       endif
 
       call prof_exit(n_max-1,1)
-11    format('  INDICIES  ','  RATE  ','  VOLUME  ','  RDEPTH  ')
-12    format(2('|-----'),'|-------',2('|---------'))
-13    format(2(1x,i5),1x,f7.5,2(1x,g9.2))
-21    format('  INDICIES  ',' OCEAN ',' SOLVED ','    % FLOW   ',
-     &   '   OUTFLOW   ',' FLOW LENGTH ')
-22    format(2('|-----'),'|------','|-------','|------------',
-     &   '|------------','|------------')
-23    format(2(1x,i5),1x,L6,1x,L7,2(1x,g12.3),1x,i8)
-31    format('  INDICIES  ','   OUTFLOW  ','   VECTOR   ')
-32    format(6('|-----'))
-33    format(6(1x,i5))
+11    format('  INDICIES  ','   AVG DEPTH ','  CROSS-AREA ',
+     &       '  STEADY VOL ','   FLOW VEL  ','   GRADIENT  ',
+     &       '   2ND AREA  ','    2ND VOL  ')
+12    format(2('|-----'),7('|------------'))
+13    format(2(1x,i5),7(1x,g12.5))
+
+
+21    format('  INDICIES  ','  FLOW FRAC  ',' DESCENDANTS ',
+     &       ' THROUGH-PUT ','  DISCHARGE  ')
+22    format(2('|-----'),'|------------',2('|-----'),'|------------')
+23    format(2(1x,i5),1x,g12.6,2(1x,i5),1x,g12.3)
 
       end subroutine
+!=======================================================================

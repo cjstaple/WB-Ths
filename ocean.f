@@ -19,14 +19,14 @@
       do i=1,d1
        do j=1,d2
          m(i,j)%outflow=0.
-         m(i,j)%f_length=0
-         m(i,j)%rate_solved=.false.
+         m(i,j)%c_dis = 0
+         m(i,j)%c_acc = 0
          if(m(i,j)%height.eq.0) then
             m(i,j)%ocean=.true.
             m(i,j)%flow_solved=.true.
             m(i,j)%flow_frac=0.
-            m(i,j)%outflow_cell(1)=i
-            m(i,j)%outflow_cell(2)=j
+            m(i,j)%d_cell(1)=i
+            m(i,j)%d_cell(2)=j
          else
             m(i,j)%ocean=.false.
             m(i,j)%flow_solved=.false.

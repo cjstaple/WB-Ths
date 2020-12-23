@@ -9,28 +9,25 @@
       implicit none
 
       type map_type
-         ! Catagory Flags
-         logical :: ocean
-         logical :: flow_solved
-         ! Cell Properties
-         integer :: height   ! [px]
-         real :: elev        ! Elevation [m]
-         real :: rain        ! [m^3/yr]
-         integer :: temp     ! [K]
-         real :: flow_frac   ! Water - Freeze - Evaporate
-         real :: outflow     ! Cell Discharge m^3/s
-         integer :: f_length ! Number of px this flows into
-         integer :: d_px     ! Number of px that flow through this one
-         integer, dimension(2) :: outflow_cell
-         ! Flow Rate
-         real :: grad        ! Local Gradient
-         real :: out_rate    ! Pixel drainage [px/s]
-         real :: vol_0       ! Steady State Volume [m^3]
-         real :: xA          ! X-Area of river [m^2]
-         real :: dep         ! Approximate Depth
+         logical :: ocean              ! Flag for Ocean Cells
+         logical :: flow_solved        ! Prevents resolving cells
+         integer :: height             ! [px] Elevation
+         integer :: temp               ! [K] Temperature
+         integer :: c_dis              ! Cells in Discharge Path
+         integer :: c_acc              ! Cells Draining into this one
+         real :: rain                  ! [m^3/yr] Rain
+         real :: elev                  ! [m] Elevation
+         real :: outflow               ! Cell Discharge [m^3/s]
+         real :: flow_frac             ! % of rain not lost to evap
+         real :: grad                  ! Local Cell Gradient
+         real :: out_rate              ! Gradient Calculated output
+         real :: vel_out               ! Rate Flow Velocity
+         real :: vol_s                 ! Steady State Volume
+         real :: xA                    ! Cross-Sectional Area
+         real :: Ax                    ! Secondary Area
+         real :: v_o                   ! Secondary Velocity
+         real :: dep                   ! River Depth Estimate
+         integer, dimension(2) :: d_cell ! Flow Destination Cell
       end type
-
-!-----Layer Functions---------------------------------------------------
-
 
       end module map_module

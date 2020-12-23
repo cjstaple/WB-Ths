@@ -14,7 +14,7 @@
       integer :: x0,y0
 !-----------------------------------------------------------------------
       
-      integer, dimension(d1,d2) :: dist         !Distance from (x0,y0)
+      integer, dimension(d1,d2) :: dist         !Distance from origin pt
       integer, dimension(d1,d2,2) :: feeder     !Prior Position in chain
       integer, dimension(9,2) :: cand           !Neighbor Storage
       logical, dimension(d1,d2) :: solved       !Prevent Revisiting
@@ -28,18 +28,18 @@
       integer :: h0,h,ht        !Height Variables
       real :: g0,g              !Gradient Variables
 
-      real :: rn
-      integer :: cpti
-      integer, dimension(3) :: cpt
+      real :: rn                !Random Number for random walk
+      integer :: cpti           !Seed Integer
+      integer, dimension(3) :: cpt !system clock for seed
 
       integer :: i,j,k,l        !Indicies
       integer :: ct             !Counter
       integer, dimension(:), allocatable :: px,py !Paths
 
 !-----------------------------------------------------------------------
-      if(m(x0,y0)%ocean) return
+      if(m(x0,y0)%flow_solved) return
 !.....Initialize........................................................
-      call prof_enter(5,1,' SHORT PATH FINDER: ')
+      call prof_enter(5,1,' LEVEL PATH FINDER: ')
       do i=1,d1
        do j=1,d2
          solved(i,j)=.false.
@@ -54,16 +54,14 @@
       call srand(cpti)
 
 !.....Set-Up Starting Node..............................................
-      solved(x0,y0)=.true.
       activ(x0,y0)=.true.
       dist(x0,y0)=0
       feeder(x0,y0,1)=x0
       feeder(x0,y0,2)=y0
       h0= m(x0,y0)%height
-      g0= m(x0,y0)%out_rate
-      h = h0
+      g0= m(x0,y0)%grad
       g = g0
-      ht= h0-1
+      ht= max(h0-1,0)
       x = x0
       nx= x0
       y = y0
@@ -87,7 +85,9 @@
            tx=cand(i,1)
            ty=cand(i,2)
            if(solved(tx,ty)) cycle
-           if(m(tx,ty)%height.gt.h) cycle
+           if(m(tx,ty)%height.gt.h) then
+              solved(tx,ty)=.true.
+           endif
            if(dist(tx,ty).gt.dist(x,y)+1) then
               dist(tx,ty)=dist(x,y)+1
               feeder(tx,ty,1)=x
@@ -101,27 +101,27 @@
           do j=1,d2
             if(solved(i,j)) cycle
             if(activ(i,j)) then
-              if(m(i,j)%height.lt.h) then
+              if(m(i,j)%height.lt.h) then !Located a drain point
                 h=m(i,j)%height
                 mindis=dist(i,j)
-                g0=m(i,j)%out_rate
+                g0=m(i,j)%grad
                 nx=i
                 ny=j
               elseif(m(i,j)%height.eq.h) then!needed to stay @ drain pt
-                if(dist(i,j).lt.mindis) then
+                if(dist(i,j).lt.mindis) then !closer that current cand?
                    mindis=dist(i,j)
-                   g0=m(i,j)%out_rate
+                   g0=m(i,j)%grad
                    nx=i
                    ny=j
-                elseif(dist(i,j).eq.mindis) then
-                   g=m(i,j)%out_rate
-                   if(g.gt.g0) then
+                elseif(dist(i,j).eq.mindis) then !Same height and dist
+                   g=m(i,j)%grad
+                   if(g.gt.g0) then !Go for the largest slope
                       g0=g
                       nx=i
                       ny=j
-                   else if (g.eq.g0) then
+                   else if (g.eq.g0) then !All things equal
                      rn=rand()
-                     if(rn.gt.0.5) then
+                     if(rn.gt.0.5) then !Random Step
                        nx=i
                        ny=j
                      endif
@@ -130,18 +130,21 @@
               endif
             endif
           enddo
-         enddo
-
-         if(((nx.eq.x).and.(ny.eq.y)).or.(solved(nx,ny))) then
+         enddo !End Loop over all cells - current best node is new node
+!........Error check to see if new node has previously been visited.....
+         if(solved(nx,ny)) then
             !Print Error Message
-            m(x0,y0)%outflow_cell(1)=x0
-            m(x0,y0)%outflow_cell(2)=y0
+            write(0,*) 'Level Drain Error for cell',x0,y0
+            m(x0,y0)%d_cell(1)=x0
+            m(x0,y0)%d_cell(2)=y0
             return
          endif
+         ! Update Current Node to Best Candidate
          x = nx
          y = ny
+         ! If new node has been solved, then reached a known drain path
          if(m(x,y)%flow_solved) then
-            h=ht
+            h=ht !If joining river on same plain, aborts loop
          else
             h = m(x,y)%height
          endif
@@ -162,9 +165,9 @@
       enddo
 !.....Drain the Entire path.............................................
       do i=1,k-1
-        if(m(px(i),py(i))%flow_solved) cycle
-        m(px(i),py(i))%outflow_cell(1)=px(i+1)
-        m(px(i),py(i))%outflow_cell(2)=py(i+1)
+        !if(m(px(i),py(i))%flow_solved) cycle
+        m(px(i),py(i))%d_cell(1)=px(i+1)
+        m(px(i),py(i))%d_cell(2)=py(i+1)
         m(px(i),py(i))%flow_solved=.true.
       enddo
       deallocate(px)
