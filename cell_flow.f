@@ -38,12 +38,12 @@
           x0=i
           y0=j
           rep = .true.
-!          if(.not.m(i,j)%flow_solved) call drain_path(m,i,j)
+          if(.not.m(i,j)%flow_solved) call drain_path(m,i,j)
           do while(rep)
             f_count = f_count + 1
+            source = source*0.975
             x=m(x0,y0)%d_cell(1)
             y=m(x0,y0)%d_cell(2)
-            source = source*0.975
             m(x,y)%outflow = m(x,y)%outflow + source
             h=m(x,y)%height
             m(x,y)%c_acc=m(x,y)%c_acc+1

@@ -69,7 +69,8 @@
          endif
 !........Set the output variables.......................................
          dzdr = sqrt(dzdx**2 + dzdy**2)
-         rout = (2.0d+01)*dzdr**2/(1+dzdr**2)
+         ! v = sqrt(L*dzdr)
+         rout = sqrt((9.81/804.672)*dzdr)
          m(i,j)%grad = dzdr
          m(i,j)%out_rate = rout
        enddo
