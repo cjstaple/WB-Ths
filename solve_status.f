@@ -19,7 +19,7 @@
          if(m(i,j)%flow_solved) nsol=nsol+1
        enddo
       enddo
-      psol=1.0d+00*nsol/(d1*d2)
+      psol=(1.0d+00*nsol)/(d1*d2)
 
       return
       end subroutine

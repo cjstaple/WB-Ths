@@ -46,6 +46,25 @@
          endif
        enddo
       enddo
+      do i=1,d1
+       do j=1,d2
+         if((map(i,j)%d_cell(1).eq.0).or.(map(i,j)%d_cell(2).eq.0)) then
+           map(i,j)%flow_solved=.false.
+         endif
+       enddo
+      enddo
+      do i=1,d1
+       do j=1,d2
+         ncyc=ncyc+1
+         if(map(i,j)%ocean) cycle
+         call prof_write
+         call drain_path(map,i,j)
+         if(ncyc.gt.10000) then
+           ncyc=0
+           call psolved(map)
+         endif
+       enddo
+      enddo
       call psolved(map)
       call flow_out(map) !Outputs Data
       call prof_write

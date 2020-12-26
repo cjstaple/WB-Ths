@@ -1,7 +1,7 @@
 VPATH = ../
 
 FC = gfortran -c			#fortran compiler
-LK = gfortran -o ../flow_v3.3 		#program linker
+LK = gfortran -o ../flow_v3.4 		#program linker
 
 OP = -fopenmp -g -O2 -fbacktrace	#compiling options
 

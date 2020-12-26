@@ -44,6 +44,13 @@
             source = source*0.975
             x=m(x0,y0)%d_cell(1)
             y=m(x0,y0)%d_cell(2)
+            if((x.eq.0).or.(y.eq.0)) then
+              write(*,*) 'Discharge Out of Bounds'
+              write(*,*) 'Starting from node:', i,j
+              write(*,*) 'Error sourcing desintain of:',x0,y0
+              write(*,*) 'Given Destination:',x,y
+              stop
+            endif
             m(x,y)%outflow = m(x,y)%outflow + source
             h=m(x,y)%height
             m(x,y)%c_acc=m(x,y)%c_acc+1
