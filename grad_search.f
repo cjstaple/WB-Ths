@@ -15,8 +15,7 @@
       integer :: i,j,k,l,r,r2
       integer :: dzx,dzy,im,ip,jm,jp,imm,ipp,jmm,jpp
       logical :: rep
-      real :: dzdx,dzdy,dzdr
-      real :: mu, qo, rout
+      real :: dzdx,dzdy,dzdr,rout
 !-----------------------------------------------------------------------
       call prof_enter(8,1,'    LOCAL GRADIENT: ')
       do i=1,d1

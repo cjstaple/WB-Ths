@@ -6,7 +6,6 @@
 
       use parameter_module
       use map_module
-      use prof_module
 
       implicit none
 

@@ -93,6 +93,8 @@
 
       subroutine prof_write
 
+      use parameter_module, only: psol
+
       integer :: n, t
       real,dimension(t_max) :: total_cput = 0.00d+00
       real,dimension(t_max) :: total_wct = 0.00d+00

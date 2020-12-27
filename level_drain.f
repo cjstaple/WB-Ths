@@ -35,6 +35,7 @@
       integer :: i,j,k,l        !Indicies
       integer :: ct             !Counter
       integer, dimension(:), allocatable :: px,py !Paths
+      integer :: dpx,dpy        !Debug Path Variables
 
 !-----------------------------------------------------------------------
       if(m(x0,y0)%flow_solved) return
@@ -87,6 +88,7 @@
            if(solved(tx,ty)) cycle
            if(m(tx,ty)%height.gt.h) then
               solved(tx,ty)=.true.
+              cycle
            endif
            if(dist(tx,ty).gt.dist(x,y)+1) then
               dist(tx,ty)=dist(x,y)+1
@@ -137,12 +139,13 @@
             write(0,*) 'Level Drain Error for cell',x0,y0
             m(x0,y0)%d_cell(1)=x0
             m(x0,y0)%d_cell(2)=y0
+            m(x0,y0)%flow_solved=.true.
             return
          endif
          ! Update Current Node to Best Candidate
          x = nx
          y = ny
-         ! If new node has been solved, then reached a known drain path
+         ! If new node has been solved, then reached a draining path
          if(m(x,y)%flow_solved) then
             h=ht !If joining river on same plain, aborts loop
          else
@@ -162,6 +165,24 @@
          py(i) = y
          nx=feeder(x,y,1)
          ny=feeder(x,y,2)
+      enddo
+!.....Path Debug Checks.................................................
+      if((px(1).ne.x0).or.(py(1).ne.y0)) then
+         write(*,*) 'Error Solved Path Does Not Start On Origin Point'
+         write(*,*) 'Error Encountered For Cell',x0,y0
+         stop
+      endif
+      do i=1,k-1
+        if(.not.activ(px(i),py(i))) then
+          write(*,*) 'Path Drains Through Non-Active Cell'
+          write(*,*) 'Error Encountered For Cell',x0,y0
+        endif
+        dpx = abs(px(i+1)-px(i))
+        dpy = abs(py(i+1)-py(i))
+        if((dpx.gt.1).or.(dpy.gt.1)) then
+          write(*,*) 'Path Makes A Multi-Cell Jump of',max(dpx,dpy)
+          write(*,*) 'Error Encountered for Cell',x0,y0
+        endif
       enddo
 !.....Drain the Entire path.............................................
       do i=1,k-1
