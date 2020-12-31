@@ -12,7 +12,8 @@ MODS = parameter_module.o profile_module.o map_module.o
 
 OBJS = ocean.o frac_calc.o drop_search.o level_drain.o\
        cell_flow.o output.o grad_search.o rate_flow.o\
-       restart_input.o initialize.o solve_status.o
+       restart_input.o initialize.o solve_status.o\
+       debug_drain_write.o
 
 PROG = rivercode.o
 

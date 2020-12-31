@@ -67,9 +67,11 @@
       nx= x0
       y = y0
       ny= y0
+      l = 0
 
 !.....Pathfinding Algorithm.............................................
       do while(h.gt.ht)
+         l = l+1
 !........Update Current Node's Neighbors................................
          solved(x,y)=.true.
          h=m(x,y)%height
@@ -151,6 +153,8 @@
          else
             h = m(x,y)%height
          endif
+         if(mod(l,10).eq.0) 
+     &      call drain_write(m,x0,y0,dist,solved,activ,l)
       enddo !End Pathfinding Algorithm
       xf=nx
       yf=ny
@@ -193,6 +197,7 @@
       enddo
       deallocate(px)
       deallocate(py)
+      call drain_write(m,x0,y0,dist,solved,activ,l+1)
       call prof_exit(5,1)
 
       end subroutine
