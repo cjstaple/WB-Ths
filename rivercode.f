@@ -39,7 +39,7 @@
          ncyc=ncyc+1
          if(map(i,j)%ocean) cycle
          call prof_write
-         call drain_path(map,i,j)
+         call drain_path(map,i,j,.false.)
          if(ncyc.gt.10000) then
            ncyc=0
            call psolved(map)
@@ -58,7 +58,7 @@
          ncyc=ncyc+1
          if(map(i,j)%ocean) cycle
          call prof_write
-         call drain_path(map,i,j)
+         call drain_path(map,i,j,.true.)
          if(ncyc.gt.10000) then
            ncyc=0
            call psolved(map)

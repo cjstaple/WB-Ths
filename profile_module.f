@@ -19,6 +19,8 @@
       real, dimension(n_max,t_max) :: wct             !Wall Clock Time
       integer(8) :: ntmax, nps
 
+      real :: psol                             !% of Solved Cells
+
       contains
 
 !***********************************************************************
@@ -39,6 +41,17 @@
       call prof_enter(n_max,1,'    TOTAL RUN TIME: ')
 
       end subroutine prof_initial
+
+!***********************************************************************
+!     Simple Subroutine to update % of Solved Cells
+!***********************************************************************
+      subroutine get_psol(psl)
+
+      real :: psl
+
+      psol = psl*1.00d+02
+
+      end subroutine get_psol
 
 !***********************************************************************
 !     This subroutine starts the tracker n on thread t 
@@ -93,8 +106,6 @@
 
       subroutine prof_write
 
-      use parameter_module, only: psol
-
       integer :: n, t
       real,dimension(t_max) :: total_cput = 0.00d+00
       real,dimension(t_max) :: total_wct = 0.00d+00
@@ -132,24 +143,7 @@
       write(12,15)
       write(12,10)
 
-      write(12,17) 100.*psol
-!      do t=2,t_max
-!       write(12,14) 'Profile for Thread: ',t
-!       write(12,10)
-!       write(12,11)
-!       write(12,12) 'Interval Name','Calls','TOTAL CPU','Average CPU',
-!     &   '% CPU_t','Total Wall', 'Average Wall', '% Wall_t'
-!       write(12,11)
-!       do n=1,n_max
-!          if(tag(n,t).gt.0) then
-!           write(12,13) leg(n),tag(n,t),dt(n,t),dt(n,t)/float(tag(n,t)),
-!     &       100.*dt(n,t)/dt(n_max,t),wct(n,t),wct(n,t)/float(tag(n,t)),
-!     &       100.*wct(n,t)/wct(n_max,t)
-!          endif
-!       enddo
-!       write(12,11)
-!       write(12,10)
-!      enddo
+      write(12,17) psol
       close(12)
 !.......................................................................
 10    format('  ')

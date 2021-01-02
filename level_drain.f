@@ -2,7 +2,7 @@
 !     Flow Pathfinder: Level Path
 !=======================================================================
 
-      subroutine drain_path(m,x0,y0)
+      subroutine drain_path(m,x0,y0,dbg)
 
       use parameter_module
       use map_module
@@ -12,6 +12,7 @@
 !-----------------------------------------------------------------------
       type(map_type),dimension(d1,d2) :: m
       integer :: x0,y0
+      logical :: dbg
 !-----------------------------------------------------------------------
       
       integer, dimension(d1,d2) :: dist         !Distance from origin pt
@@ -153,8 +154,9 @@
          else
             h = m(x,y)%height
          endif
-         if(mod(l,10).eq.0) 
-     &      call drain_write(m,x0,y0,dist,solved,activ,l)
+         if(mod(l,10).eq.0) then
+            if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l)
+         endif
       enddo !End Pathfinding Algorithm
       xf=nx
       yf=ny
@@ -197,7 +199,7 @@
       enddo
       deallocate(px)
       deallocate(py)
-      call drain_write(m,x0,y0,dist,solved,activ,l+1)
+      if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l+1)
       call prof_exit(5,1)
 
       end subroutine
