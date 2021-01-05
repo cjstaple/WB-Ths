@@ -40,7 +40,7 @@
          if(map(i,j)%ocean) cycle
          call prof_write
          call drain_path(map,i,j,.false.)
-         if(ncyc.gt.10000) then
+         if(ncyc.gt.5000) then
            ncyc=0
            call psolved(map)
          endif
@@ -48,18 +48,22 @@
       enddo
       do i=1,d1
        do j=1,d2
-         if((map(i,j)%d_cell(1).eq.0).or.(map(i,j)%d_cell(2).eq.0)) then
+         a = map(i,j)%d_cell(1)
+         b = map(i,j)%d_cell(2)
+         if((a.eq.0).or.(b.eq.0)) then
            map(i,j)%flow_solved=.false.
          endif
        enddo
       enddo
+      call psolved(map)
+      ncyc=0
       do i=1,d1
        do j=1,d2
          ncyc=ncyc+1
          if(map(i,j)%ocean) cycle
          call prof_write
          call drain_path(map,i,j,.true.)
-         if(ncyc.gt.10000) then
+         if(ncyc.gt.5000) then
            ncyc=0
            call psolved(map)
          endif

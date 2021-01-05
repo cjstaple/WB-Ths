@@ -26,8 +26,9 @@
       integer :: nx,ny          !Coordinates of Best Candidate Node
       integer :: xf,yf          !Coordinates of Drain Node
       integer :: mindis         !Distance to Closest Unsolved Node
-      integer :: h0,h,ht        !Height Variables
+      integer :: h0,h,ht,hq     !Height Variables
       real :: g0,g              !Gradient Variables
+      logical :: search         !Pathfinding Repeater Variable
 
       real :: rn                !Random Number for random walk
       integer :: cpti           !Seed Integer
@@ -51,6 +52,7 @@
          feeder(i,j,2)=0
        enddo
       enddo
+      search = .true.
       call itime(cpt)
       cpti=mod(cpt(2)*cpt(3),10000)
       call srand(cpti)
@@ -61,6 +63,7 @@
       feeder(x0,y0,1)=x0
       feeder(x0,y0,2)=y0
       h0= m(x0,y0)%height
+      h = m(x0,y0)%height
       g0= m(x0,y0)%grad
       g = g0
       ht= max(h0-1,0)
@@ -71,48 +74,40 @@
       l = 0
 
 !.....Pathfinding Algorithm.............................................
-      do while(h.gt.ht)
+      do while(search)
          l = l+1
 !........Update Current Node's Neighbors................................
          solved(x,y)=.true.
-         h=m(x,y)%height
-         ct=0
          do i=-1,1,1
           do j=-1,1,1
-            ct=ct+1
-            cand(ct,1)=min(max(x+i,1),d1)
-            cand(ct,2)=min(max(y+j,1),d2)
+            tx=min(max(x+i,1),d1)
+            ty=min(max(y+j,1),d2)
+            if(solved(tx,ty)) cycle
+            if(m(tx,ty)%height.gt.h0) then
+               solved(tx,ty)=.true.
+               cycle
+            elseif(dist(tx,ty).gt.dist(x,y)+1) then
+               dist(tx,ty)=dist(x,y)+1
+               feeder(tx,ty,1)=x
+               feeder(tx,ty,2)=y
+               activ(tx,ty)=.true.
+            endif
           enddo
-         enddo
-         do i=1,9
-           if(i.eq.5) cycle
-           tx=cand(i,1)
-           ty=cand(i,2)
-           if(solved(tx,ty)) cycle
-           if(m(tx,ty)%height.gt.h) then
-              solved(tx,ty)=.true.
-              cycle
-           endif
-           if(dist(tx,ty).gt.dist(x,y)+1) then
-              dist(tx,ty)=dist(x,y)+1
-              feeder(tx,ty,1)=x
-              feeder(tx,ty,2)=y
-              activ(tx,ty)=.true.
-           endif
          enddo
 !........Find Nearest Unsolved Node Or Drain Point......................
          mindis=100000000
+         hq = h !Query Height of Current Cell Candidate
          do i=1,d1
           do j=1,d2
-            if(solved(i,j)) cycle
             if(activ(i,j)) then
-              if(m(i,j)%height.lt.h) then !Located a drain point
-                h=m(i,j)%height
+              if(solved(i,j)) cycle
+              if(m(i,j)%height.lt.hq) then !Located a drain point
+                hq=m(i,j)%height
                 mindis=dist(i,j)
                 g0=m(i,j)%grad
                 nx=i
                 ny=j
-              elseif(m(i,j)%height.eq.h) then!needed to stay @ drain pt
+              elseif(m(i,j)%height.eq.hq) then!needed to stay @ drain pt
                 if(dist(i,j).lt.mindis) then !closer that current cand?
                    mindis=dist(i,j)
                    g0=m(i,j)%grad
@@ -148,12 +143,8 @@
          ! Update Current Node to Best Candidate
          x = nx
          y = ny
-         ! If new node has been solved, then reached a draining path
-         if(m(x,y)%flow_solved) then
-            h=ht !If joining river on same plain, aborts loop
-         else
-            h = m(x,y)%height
-         endif
+         h = m(x,y)%height
+         if((h.le.ht).or.(m(x,y)%flow_solved)) search=.false.
          if(mod(l,10).eq.0) then
             if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l)
          endif
@@ -192,7 +183,6 @@
       enddo
 !.....Drain the Entire path.............................................
       do i=1,k-1
-        !if(m(px(i),py(i))%flow_solved) cycle
         m(px(i),py(i))%d_cell(1)=px(i+1)
         m(px(i),py(i))%d_cell(2)=py(i+1)
         m(px(i),py(i))%flow_solved=.true.
