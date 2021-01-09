@@ -137,7 +137,8 @@
             m(x0,y0)%flow_solved=.true.
             return
          endif
-         if((h.le.ht).or.(m(x,y)%flow_solved)) search=.false.
+         if(h.le.ht) search=.false.
+         if((l.gt.100.).and.(m(x,y)%flow_solved)) search=.false.
          if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l)
       enddo !End Pathfinding Algorithm
       xf=nx

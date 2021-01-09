@@ -62,9 +62,9 @@
       g0= m(x0,y0)%grad
       g = g0
       x = x0
-      nx= 0
+      nx= x
       y = y0
-      ny= 0
+      ny= y
       l = 0
 
 !.....Pathfinding Algorithm.............................................
