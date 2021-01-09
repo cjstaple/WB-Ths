@@ -20,16 +20,18 @@
 !-----------------------------------------------------------------------
       integer :: i,j,k
 !-----------------------------------------------------------------------
+      ln = ln/10
 !.....Create File.......................................................
       ext = '.dat'
-      num= char(48+mod(ln/10000,10))//char(48+mod(ln/1000,10))//
-     &     char(48+mod(ln/100,10))//char(48+mod(ln/10,10))
+      num= char(48+mod(ln/1000,10))//char(48+mod(ln/100,10))//
+     &     char(48+mod(ln/10,10))//char(48+mod(ln,10))
       xq = char(48+mod(x0/1000,10))//char(48+mod(x0/100,10))//
      &     char(48+mod(x0/10,10))//char(48+mod(x0,10))
       yq = char(48+mod(y0/1000,10))//char(48+mod(y0/100,10))//
      &     char(48+mod(y0/10,10))//char(48+mod(y0,10))
-      fname=trim('output/Drain_')//trim(xq)//'-'//trim(yq)//
-     &      trim('_step_')//trim(num)//ext
+
+      fname=trim('debug/Q_')//trim(xq)//'_'//trim(yq)//trim('_step_')//
+     &      trim(num)//ext
 
 !.....Output Data......................................................      
       open(1,file=fname,status='unknown')

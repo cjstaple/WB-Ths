@@ -20,7 +20,7 @@
        enddo
       enddo
       psl = 1.0d+00*nsol/(d1*d2)
-      call get_psol(psl)
+      psol = psl
 
       end subroutine
 !=======================================================================

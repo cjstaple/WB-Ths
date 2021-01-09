@@ -2,7 +2,7 @@
 !     Flow Pathfinder: Level Path
 !=======================================================================
 
-      subroutine drain_path(m,x0,y0,dbg)
+      subroutine elev_drain_path(m,x0,y0,dbg)
 
       use parameter_module
       use map_module
@@ -26,7 +26,7 @@
       integer :: nx,ny          !Coordinates of Best Candidate Node
       integer :: xf,yf          !Coordinates of Drain Node
       integer :: mindis         !Distance to Closest Unsolved Node
-      integer :: h0,h,ht,hq     !Height Variables
+      real :: h0,h,ht,hq        !Height Variables
       real :: g0,g              !Gradient Variables
       logical :: search         !Pathfinding Repeater Variable
 
@@ -57,11 +57,10 @@
       dist(x0,y0)=0
       feeder(x0,y0,1)=x0
       feeder(x0,y0,2)=y0
-      h0= m(x0,y0)%height
-      h = m(x0,y0)%height
+      h0= m(x0,y0)%elev
+      h = m(x0,y0)%elev
       g0= m(x0,y0)%grad
       g = g0
-      ht= max(h0-1,0)
       x = x0
       nx= 0
       y = y0
@@ -78,7 +77,7 @@
             tx=min(max(x+i,1),d1)
             ty=min(max(y+j,1),d2)
             if(solved(tx,ty)) cycle
-            if(m(tx,ty)%height.gt.h0) then
+            if(m(tx,ty)%elev.gt.h0) then
                solved(tx,ty)=.true.
             elseif(dist(tx,ty).gt.dist(x,y)+1) then
                dist(tx,ty)=dist(x,y)+1
@@ -95,19 +94,19 @@
           do j=1,d2
             if(activ(i,j)) then
               if(solved(i,j)) cycle
-              if(m(i,j)%height.lt.hq) then !Located a drain point
-                hq=m(i,j)%height
+              if(m(i,j)%elev.lt.hq) then !Located a drain point
+                hq=m(i,j)%elev
                 mindis=dist(i,j)
                 g0=m(i,j)%grad
                 nx=i
                 ny=j
-              elseif(m(i,j)%height.eq.hq) then!needed to stay @ drain pt
+              elseif(m(i,j)%elev.eq.hq) then!needed to stay @ drain pt
                 if(dist(i,j).lt.mindis) then !closer that current cand?
                    mindis=dist(i,j)
                    g0=m(i,j)%grad
                    nx=i
                    ny=j
-                elseif(dist(i,j).eq.mindis) then !Same height and dist
+                elseif(dist(i,j).eq.mindis) then !Same elev and dist
                    g=m(i,j)%grad
                    if(g.gt.g0) then !Go for the largest slope
                       g0=g
@@ -127,7 +126,7 @@
          enddo !End Loop over all cells - current best node is new node
          x = nx
          y = ny
-         h = m(x,y)%height
+         h = m(x,y)%elev
 !........Error check to see if new node has previously been visited.....
          if(solved(nx,ny)) then
             !Print Error Message
@@ -137,7 +136,7 @@
             m(x0,y0)%flow_solved=.true.
             return
          endif
-         if((h.le.ht).or.(m(x,y)%flow_solved)) search=.false.
+         if((h.lt.h0).or.(m(x,y)%flow_solved)) search=.false.
          if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l)
       enddo !End Pathfinding Algorithm
       xf=nx

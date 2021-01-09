@@ -17,22 +17,20 @@
       logical :: restart
 
 !-----Import Map Data---------------------------------------------------
+      ncyc=0
       call prof_initial
       allocate(map(d1,d2))
-      call readin(map) !Read input data from files
-      call prof_write !Code Profiling
-      ncyc=0
+      call readin(map,.false.)     !Read input data from files
+      call prof_write              !Code Profiling
+!.....Determine Base Map Properties.....................................
+      call ocean_search(map)       !Identify Ocean Cells
+      call frac_calc(map)          !Remove Rainwater Lost to Evaporation
+      call grad(map)               !Calculate Local Cell Gradients
 
-      call ocean_search(map) !Search for the Ocean Cells
-      call frac_calc(map) !Calculate fraction of water that flows out
-      call grad(map) !Calculates Local Cell Gradients \& Flow Rates
-!      call check_restart(map,restart) ! Read in Path data if it exists
-
-      call drop_search(map) !Calculate Flows along slope edges
-!.....Determine Fraction of Map That has been solved....................
-      call psolved(map)
-      call flow_out(map) !Outputs Data
-
+!.....Cell-To-Cell Flow.................................................
+      call drop_search(map)        !Look for Cells with Lower Neighbors
+!      call elev_drop_search(map)   !^^^ But uses Elevation instead of Ht
+      call flow_out(map)           !Outputs Data
 !.....Calculate Flow Paths across level plains..........................
       do i=1,d1
        do j=1,d2
@@ -40,14 +38,11 @@
          if(map(i,j)%ocean) cycle
          call prof_write
          call drain_path(map,i,j,.false.)
+!         call elev_drain_path(map,i,j,.false.)
          if(ncyc.gt.5000) then
            ncyc=0
            call psolved(map)
          endif
-       enddo
-      enddo
-      do i=1,d1
-       do j=1,d2
          a = map(i,j)%d_cell(1)
          b = map(i,j)%d_cell(2)
          if((a.eq.0).or.(b.eq.0)) then
@@ -55,7 +50,6 @@
          endif
        enddo
       enddo
-      call psolved(map)
       ncyc=0
       do i=1,d1
        do j=1,d2
@@ -63,6 +57,7 @@
          if(map(i,j)%ocean) cycle
          call prof_write
          call drain_path(map,i,j,.true.)
+!         call elev_drain_path(map,i,j,.true.)
          if(ncyc.gt.5000) then
            ncyc=0
            call psolved(map)
@@ -77,8 +72,6 @@
       call cell_flow(map) !Calculates Annual Flow Throughput
       call flow_rate(map) !Calculate Steady-State Volumes
       call flow_out(map) !Outputs Data
-
-!.....Terminate Program.................................................
       call prof_write
       deallocate(map)
 

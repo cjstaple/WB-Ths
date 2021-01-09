@@ -2,7 +2,7 @@
 !      Flow Pathfinder: Drop Search
 !=======================================================================
 
-      subroutine drop_search(m)
+      subroutine elev_drop_search(m)
 
       use map_module
       use prof_module
@@ -15,7 +15,7 @@
 !-----------------------------------------------------------------------
       integer :: i,j,k,l
       integer :: p,q
-      integer :: h00,h0,ht
+      real :: h00,h0,ht
       real :: g,g0
       integer, dimension(d1,d2) :: dh
 !-----------------------------------------------------------------------
@@ -26,13 +26,13 @@
            m(i,j)%d_cell(1)=i
            m(i,j)%d_cell(2)=j
          else
-           h00=m(i,j)%height
-           h0=m(i,j)%height
+           h00=m(i,j)%elev
+           h0=m(i,j)%elev
            do k=-1,1,1
             do l=-1,1,1
               p=min(max(i+k,1),d1)
               q=min(max(j+l,1),d2)
-              ht=m(p,q)%height
+              ht=m(p,q)%elev
               if(ht.lt.h0) then !New Candidate is at a lower height
                 h0=ht
                 g0=m(p,q)%grad

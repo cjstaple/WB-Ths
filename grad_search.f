@@ -17,7 +17,7 @@
       logical :: rep
       real :: dzdx,dzdy,dzdr,rout
 !-----------------------------------------------------------------------
-      call prof_enter(8,1,'    LOCAL GRADIENT: ')
+      call prof_enter(8,'    LOCAL GRADIENT: ')
       do i=1,d1
        do j=1,d2
        if(m(i,j)%ocean) cycle  ! Don't calculate gradient if ocean cell
@@ -52,20 +52,6 @@
            !Check if slope is detected to end loop
            if((dzdx.gt.0.).or.(dzdy.gt.0.)) rep=.false.
          enddo
-!........Error Check - Make sure loop didn't exit with a 0 gradient.....
-         if((dzdx.eq.0.).and.(dzdy.eq.0.)) then
-           write(*,*) 'Gradient Search Error'
-           write(*,*) ' i  = ', i
-           write(*,*) ' j  = ', j
-           write(*,*) ' r  = ', r
-           write(*,*) 'dzx = ', dzx
-           write(*,*) 'dzy = ', dzy
-           write(*,*) 'im  = ', im
-           write(*,*) 'ip  = ', ip
-           write(*,*) 'jm  = ', jm
-           write(*,*) 'jp  = ', jp
-           stop
-         endif
 !........Set the output variables.......................................
          dzdr = sqrt(dzdx**2 + dzdy**2)
          ! v = sqrt(L*dzdr)
@@ -74,7 +60,7 @@
          m(i,j)%out_rate = rout
        enddo
       enddo
-      call prof_exit(8,1)
+      call prof_exit(8)
       call prof_write
 
       return

@@ -9,17 +9,14 @@
       implicit none
 
       integer, parameter :: n_max=20            !Max Number of Trackers
-      integer, parameter :: t_max=5             !Max Number of Threads
-      logical, dimension(n_max,t_max) :: active       !On/Off Button
+      logical, dimension(n_max) :: active       !On/Off Button
       character(len=20), dimension(n_max) :: leg      !Tracker Name
-      integer, dimension(n_max,t_max) :: tag          !Number of Calls
-      real, dimension(n_max,t_max) :: t0              !Interval Start
-      real, dimension(n_max,t_max) :: dt              !Accumulated Time
-      integer(8),dimension(n_max,t_max) :: sc         !System Clocks
-      real, dimension(n_max,t_max) :: wct             !Wall Clock Time
+      integer, dimension(n_max) :: tag          !Number of Calls
+      real, dimension(n_max) :: t0              !Interval Start
+      real, dimension(n_max) :: dt              !Accumulated Time
+      integer(8),dimension(n_max) :: sc         !System Clocks
+      real, dimension(n_max) :: wct             !Wall Clock Time
       integer(8) :: ntmax, nps
-
-      real :: psol                             !% of Solved Cells
 
       contains
 
@@ -38,36 +35,24 @@
       tag = 0
       dt = 0.
       wct = 0.
-      call prof_enter(n_max,1,'    TOTAL RUN TIME: ')
+      call prof_enter(n_max,'    TOTAL RUN TIME: ')
 
       end subroutine prof_initial
-
-!***********************************************************************
-!     Simple Subroutine to update % of Solved Cells
-!***********************************************************************
-      subroutine get_psol(psl)
-
-      real :: psl
-
-      psol = psl*1.00d+02
-
-      end subroutine get_psol
 
 !***********************************************************************
 !     This subroutine starts the tracker n on thread t 
 !***********************************************************************
 
-      subroutine prof_enter(n,t,nam)
+      subroutine prof_enter(n,nam)
 
       integer, intent(in) :: n
-      integer, intent(in) :: t
       character(len=*) :: nam
 
-      active(n,t) = .true.   !turns on tracker n on thread t
+      active(n) = .true.   !turns on tracker n on thread t
       leg(n) = nam           !names the tracker
-      tag(n,t) = tag(n,t)+1  !increments the calls
-      call cpu_time(t0(n,t)) !Turn on cpu clock
-      call system_clock(COUNT=sc(n,t)) !Turn on wall clock
+      tag(n) = tag(n)+1  !increments the calls
+      call cpu_time(t0(n)) !Turn on cpu clock
+      call system_clock(COUNT=sc(n)) !Turn on wall clock
 
       end subroutine prof_enter
 
@@ -75,26 +60,25 @@
 !     This subroutine ends the tracker n on thread t
 !***********************************************************************
 
-      subroutine prof_exit(n,t)
+      subroutine prof_exit(n)
 
       integer, intent(in) :: n
-      integer, intent(in) :: t
       real :: t1
       integer(8) :: st
 !.......................................................................
 
-      if(active(n,t)) then
+      if(active(n)) then
          call cpu_time(t1)
          call system_clock(COUNT=st)
 
-         dt(n,t) = dt(n,t)+t1-t0(n,t)
-         t0(n,t) = t1
+         dt(n) = dt(n)+t1-t0(n)
+         t0(n) = t1
 
-         if(st.lt.sc(n,t)) st = st+ntmax
-         wct(n,t) = wct(n,t)+real(st-sc(n,t))/nps
-         sc(n,t) = MOD(st,ntmax)
+         if(st.lt.sc(n)) st = st+ntmax
+         wct(n) = wct(n)+real(st-sc(n))/nps
+         sc(n) = MOD(st,ntmax)
       endif
-      active(n,t) = .false.
+      active(n) = .false.
 
       end subroutine prof_exit
 
@@ -106,20 +90,18 @@
 
       subroutine prof_write
 
-      integer :: n, t
-      real,dimension(t_max) :: total_cput = 0.00d+00
-      real,dimension(t_max) :: total_wct = 0.00d+00
+      integer :: n
+      real :: total_cput = 0.00d+00
+      real :: total_wct = 0.00d+00
 !.......................................................................
 
       do n=1,n_max
-       do t=1,t_max
-        if(active(n,t)) then
-           call prof_exit(n,t)
-           active(n,t)=.true.
+        if(active(n)) then
+           call prof_exit(n)
+           active(n)=.true.
         endif
-        total_cput(t) = total_cput(t)+dt(n,t)
-        total_wct(t) = total_wct(t)+wct(n,t)
-       enddo
+        total_cput = total_cput+dt(n)
+        total_wct = total_wct+wct(n)
       enddo
 !.......................................................................
 
@@ -132,10 +114,10 @@
      &   '% CPU_t','Total Wall', 'Average Wall', '% Wall_t'
       write(12,11)
       do n=1,n_max
-       if(tag(n,1).gt.0) then
-         write(12,13) leg(n),tag(n,1),dt(n,1),dt(n,1)/float(tag(n,1)),
-     &     100.*dt(n,1)/dt(n_max,1),wct(n,1),wct(n,1)/float(tag(n,1)),
-     &     100.*wct(n,1)/wct(n_max,1)
+       if(tag(n).gt.0) then
+         write(12,13) leg(n),tag(n),dt(n),dt(n)/float(tag(n)),
+     &     100.*dt(n)/dt(n_max),wct(n),wct(n)/float(tag(n)),
+     &     100.*wct(n)/wct(n_max)
        endif
       enddo
       write(12,11)

@@ -9,5 +9,6 @@
 !.....IMAGE PROPERTIES..................................................
       integer :: d1 = 1683     !first image dimension
       integer :: d2 = 2016     !second image diminesion
+      real :: psol
 
       end module parameter_module
