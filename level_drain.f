@@ -114,11 +114,11 @@
                       nx=i
                       ny=j
                    else if (g.eq.g0) then !All things equal
-                     rn=rand()
-                     if(rn.gt.0.5) then !Random Step
-                       nx=i
-                       ny=j
-                     endif
+                      !Uncomment Lines To Move Else Stay
+                      nx=i
+                      ny=j
+                      !Move means moving from (-1,-1)->(1,1) gives
+                      !pririty to unsolved nodes at (1,1)
                    endif
                 endif
               endif
@@ -138,7 +138,7 @@
             return
          endif
          if(h.le.ht) search=.false.
-         if((l.gt.100.).and.(m(x,y)%flow_solved)) search=.false.
+         if((m(x,y)%flow_solved).and.(h0.ge.3) search=.false.
          if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l)
       enddo !End Pathfinding Algorithm
       xf=nx

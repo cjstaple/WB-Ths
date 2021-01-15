@@ -21,7 +21,7 @@
         open(4,file="data-a.dat")
         do i=1,d1
          do j=1,d2
-           read(1,*) a,b,m(i,j)%height,m(i,j)%rain,m(i,j)%temp
+           read(4,*) a,b,m(i,j)%height,m(i,j)%rain,m(i,j)%temp
          enddo
         enddo
         close(4)

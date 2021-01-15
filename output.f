@@ -46,7 +46,7 @@
        do j=1,d2
         write(10,13) i,j,m(i,j)%depth,m(i,j)%xA,m(i,j)%vol,m(i,j)%flow_v
         write(20,23) i,j,m(i,j)%c_dis,m(i,j)%c_acc,m(i,j)%outflow
-        write(30,33) i,j m(i,j)%grad,m(i,j)%d_cell(1),m(i,j)%d_cell(2)
+        write(30,33) i,j,m(i,j)%grad,m(i,j)%d_cell(1),m(i,j)%d_cell(2)
        enddo
       enddo
       write(10,12)
