@@ -108,18 +108,23 @@
                    nx=i
                    ny=j
                 elseif(dist(i,j).eq.mindis) then !Same height and dist
-                   g=m(i,j)%grad
-                   if(g.gt.g0) then !Go for the largest slope
-                      g0=g
-                      nx=i
-                      ny=j
-                   else if (g.eq.g0) then !All things equal
-                      !Uncomment Lines To Move Else Stay
-                      nx=i
-                      ny=j
-                      !Move means moving from (-1,-1)->(1,1) gives
-                      !pririty to unsolved nodes at (1,1)
-                   endif
+                   nx = 2*i-feeder(i,j,1)
+                   ny = 2*j-feeder(i,j,2)
+                   ! Sets flow to continue along the same path
+!The Largest Slope doesn't include direction so chase mountains instead
+!of flowing into valleys
+!                   g=m(i,j)%grad
+!                   if(g.gt.g0) then !Go for the largest slope
+!                      g0=g
+!                      nx=i
+!                      ny=j
+!                   else if (g.eq.g0) then !All things equal
+!                      !Uncomment Lines To Move Else Stay
+!                      nx=i
+!                      ny=j
+!                      !Move means moving from (-1,-1)->(1,1) gives
+!                      !pririty to unsolved nodes at (1,1)
+!                   endif
                 endif
               endif
             endif
@@ -138,8 +143,7 @@
             return
          endif
          if(h.le.ht) search=.false.
-         if((m(x,y)%flow_solved).and.(h0.ge.3) search=.false.
-         if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l)
+         if(m(x,y)%flow_solved) search=.false.
       enddo !End Pathfinding Algorithm
       xf=nx
       yf=ny
@@ -182,7 +186,6 @@
       enddo
       deallocate(px)
       deallocate(py)
-      if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l)
       call prof_exit(5)
 
       end subroutine

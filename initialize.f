@@ -13,10 +13,10 @@
       type(map_type), dimension(d1,d2) :: m
       logical :: mode !True = Single File Import; False = 3-File
       integer :: i,j,a,b
-      real :: pxf,ele
+      real :: pxf,ele,mele,tav,fl
 !-----------------------------------------------------------------------
       call prof_enter(1,'      DATA READ-IN: ')
-      pxf = (804.672**2)*1.0d-03
+      pxf = (Lpx**2)*1.0d-03
       if(mode) then
         open(4,file="data-a.dat")
         do i=1,d1
@@ -47,16 +47,26 @@
         enddo
         close(4)
       endif
-
+!.....Get Rain (Source) into the Correct Units..........................
       do i=1,d1
        do j=1,d2
-         ele = m(i,j)%height 
-         if((i.gt.1).and.(j.gt.1).and.(i.lt.d1).and.(j.lt.d2)) then
-           ele = (ele + 0.5*(m(i+1,j)%height + m(i-1,j)%height
-     &         + m(i,j+1)%height + m(i,j-1)%height))/3.
-         endif
-         m(i,j)%elev = ele*25.5             !m
-         m(i,j)%rain = m(i,j)%rain*pxf      !m^3/year
+         tav = 1.0d+00*m(i,j)%temp-2.900d+02
+         fl = 6.43d+01-(7.3513d-04)*tav
+         m(i,j)%rain=m(i,j)%rain*fl*pxf   !m^3/year
+       enddo
+      enddo
+!.....Define Cell Elevation based on pxl heights........................
+      m(1,:)%elev = m(1,:)%height*hpx
+      m(d1,:)%elev= m(d1,:)%height*hpx
+      m(:,1)%elev = m(:,1)%height*hpx
+      m(:,d2)%elev= m(:,d2)%height*hpx
+      do i=2,d1-1
+       do j=2,d2-1
+         mele=min(m(i,j)%height,m(i+1,j)%height,m(i-1,j)%height,
+     &    m(i,j+1)%height,m(i,j-1)%height)
+         ele = (m(i,j)%height + 0.5*(m(i+1,j)%height + m(i-1,j)%height)
+     &         + 0.5*(m(i,j+1)%height + m(i,j-1)%height))/3.
+         m(i,j)%elev = hpx*max(mele,ele)   !m
        enddo
       enddo
 

@@ -11,7 +11,6 @@
       implicit none
 
 !-----Local Variable Definitions----------------------------------------
-
       type(map_type), dimension(:,:),allocatable :: map
       integer :: i,j,k,a,b,ncyc
       logical :: restart
@@ -24,7 +23,6 @@
       call prof_write              !Code Profiling
 !.....Determine Base Map Properties.....................................
       call ocean_search(map)       !Identify Ocean Cells
-      call frac_calc(map)          !Remove Rainwater Lost to Evaporation
       call grad(map)               !Calculate Local Cell Gradients
 
 !.....Cell-To-Cell Flow.................................................
@@ -70,6 +68,7 @@
 
 !.....Calculate Flow Rates and Steady State Volumes.....................
       call cell_flow(map) !Calculates Annual Flow Throughput
+      call grad_drain(map) !Drains Map based on Gradient Calculation
       call flow_rate(map) !Calculate Steady-State Volumes
       call flow_out(map) !Outputs Data
       call prof_write

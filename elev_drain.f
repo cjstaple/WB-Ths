@@ -137,7 +137,6 @@
             return
          endif
          if((h.lt.h0).or.(m(x,y)%flow_solved)) search=.false.
-         if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l)
       enddo !End Pathfinding Algorithm
       xf=nx
       yf=ny
@@ -180,7 +179,6 @@
       enddo
       deallocate(px)
       deallocate(py)
-      if(dbg) call drain_write(m,x0,y0,dist,solved,activ,l)
       call prof_exit(5)
 
       end subroutine
