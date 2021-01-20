@@ -19,16 +19,16 @@
       call prof_enter(n_max-1,'      WRITE OUTPUT: ')
       if(rep) then
         rep = .false.
-        open(40,file="output/elev-a.dat")
-        write(40,41)
-        write(40,42)
+        open(50,file="output/elev-a.dat")
+        write(50,51)
+        write(50,52)
         do i=1,d1
          do j=1,d2
-          write(40,43) i,j,m(i,j)%height,m(i,j)%elev
+          write(50,53) i,j,m(i,j)%height,m(i,j)%elev
          enddo
         enddo
-        write(40,42)
-        close(40)
+        write(50,52)
+        close(50)
       endif
       dname="output/state-a.dat"
       fname="output/flow-a.dat"
@@ -87,6 +87,10 @@
 42    format(2('|-----'),'|------------',2('|---------'),
      &       '|------------')
 43    format(2(1x,i5),2(1x,i9),1x,g12.3)
+
+51    format('  INDICIES  ','HEIGHT','ELEVATION')
+52    format('---------------------------------')
+53    format(3(1x,i5),(1x,g9.5))
 
       end subroutine
 !=======================================================================
